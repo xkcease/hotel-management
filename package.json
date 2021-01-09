@@ -9,6 +9,7 @@
         "lint": "vue-cli-service lint"
     },
     "dependencies": {
+        "axios": "^0.21.1",
         "core-js": "^3.6.5",
         "element-plus": "^1.0.1-beta.21",
         "vue": "^3.0.0",
@@ -33,7 +34,9 @@
         "prettier": "^1.19.1",
         "sass": "^1.26.5",
         "sass-loader": "^8.0.2",
-        "typescript": "~3.9.3",
+        "style-resources-loader": "^1.4.1",
+        "svg-sprite-loader": "^5.2.1",
+        "vue-cli-plugin-style-resources-loader": "^0.1.4",
         "vue-jest": "^5.0.0-0"
     }
 }
