@@ -2,14 +2,14 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
     {
-        path: '/',
-        alias: '/login',
+        path: '/login',
         name: 'Login',
         component: () =>
             import(/* webpackChunkName: "login" */ '../views/Login'),
     },
     {
-        path: '/hall',
+        path: '/',
+        redirect: '/home',
         name: 'Hall',
         component: () => import(/* webpackChunkName: "hall" */ '../views/Hall'),
         children: [
@@ -21,6 +21,10 @@ const routes = [
             },
         ],
     },
+    {
+        path: '/test',
+        component: () => import('../views/test')
+    }
 ];
 
 const router = createRouter({
