@@ -21,10 +21,6 @@ const routes = [
             },
         ],
     },
-    {
-        path: '/test',
-        component: () => import('../views/test')
-    }
 ];
 
 const router = createRouter({
