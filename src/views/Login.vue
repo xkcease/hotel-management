@@ -4,6 +4,7 @@
         <div class="login__form-wrap">
             <svg-icon icon-class="hotel" class="login__logo"></svg-icon>
             <h2 class="login__title">hotel management</h2>
+            <p class="login__msg">{{ errorMsg }}</p>
             <el-form :model="form" :rules="rules" ref="formElem">
                 <el-form-item prop="username">
                     <el-input
@@ -37,8 +38,9 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { loginRequest } from '../utils/request';
 
 export default {
     name: 'Login',
@@ -59,12 +61,32 @@ export default {
             ],
         });
 
+        // 错误信息清空
+        let errorMsg = ref('');
+        watch(form, () => {
+            if (errorMsg.value) {
+                errorMsg.value = '';
+            }
+        });
+
         const formElem = ref(null);
         const login = () => {
             formElem.value.validate((valid) => {
                 if (valid) {
-                    console.log('logout');
-                    router.push({ name: 'Home' });
+                    loginRequest(form)
+                        .then((res) => {
+                            if (res.state) {
+                                sessionStorage.setItem('token', res.token);
+                                console.log('logout');
+                                router.push({ name: 'Home' });
+                            } else {
+                                console.log(res.msg);
+                                errorMsg.value = res.msg;
+                            }
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        });
                 } else {
                     console.log('fail');
                     return false;
@@ -77,6 +99,7 @@ export default {
             rules,
             login,
             formElem,
+            errorMsg,
         };
     },
 };
@@ -118,7 +141,15 @@ export default {
         color: $theme-color;
         font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,
             Microsoft YaHei, Arial, sans-serif;
-        margin: 28px 0;
+        margin-top: 28px;
+        margin-bottom: 16px;
+    }
+
+    .login__msg {
+        height: 12px;
+        font-size: 12px;
+        color: $danger-color;
+        text-align: left;
     }
 
     .login__icon {
