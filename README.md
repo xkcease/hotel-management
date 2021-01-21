@@ -7,7 +7,7 @@ vue3 + element-ui
 - Vue Router
 - Vuex 
 - Vue CLI
-- Element-UI
+- Element-UI-Plus
 - Sass 
 - ES6
 - Axios
@@ -26,7 +26,9 @@ npm run build
 ```
 
 ## 功能
-1.  to be continued
+1. 登录
+2. 修改密码
+3. to be continued
 
 
 
