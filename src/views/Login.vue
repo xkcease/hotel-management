@@ -4,7 +4,7 @@
         <div class="login__form-wrap">
             <svg-icon icon-class="hotel" class="login__logo"></svg-icon>
             <h2 class="login__title">hotel management</h2>
-            <p class="login__msg">{{ errorMsg }}</p>
+            <p class="form__msg">{{ errorMsg }}</p>
             <el-form :model="form" :rules="rules" ref="formElem">
                 <el-form-item prop="username">
                     <el-input
@@ -12,7 +12,7 @@
                         placeholder="请输入用户名"
                     >
                         <template #prefix>
-                            <i class="el-icon-user login__icon"></i>
+                            <i class="el-icon-user form__icon"></i>
                         </template>
                     </el-input>
                 </el-form-item>
@@ -23,12 +23,12 @@
                         show-password
                     >
                         <template #prefix>
-                            <i class="el-icon-lock login__icon"></i>
+                            <i class="el-icon-lock form__icon"></i>
                         </template>
                     </el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button class="login__btn" type="primary" @click="login">
+                    <el-button class="form__btn" type="primary" @click="login">
                         登录
                     </el-button>
                 </el-form-item>
@@ -77,6 +77,11 @@ export default {
                         .then((res) => {
                             if (res.state) {
                                 sessionStorage.setItem('token', res.token);
+                                sessionStorage.setItem(
+                                    'username',
+                                    form.username
+                                );
+
                                 console.log('logout');
                                 router.push({ name: 'Home' });
                             } else {
@@ -143,23 +148,6 @@ export default {
             Microsoft YaHei, Arial, sans-serif;
         margin-top: 28px;
         margin-bottom: 16px;
-    }
-
-    .login__msg {
-        height: 12px;
-        font-size: 12px;
-        color: $danger-color;
-        text-align: left;
-    }
-
-    .login__icon {
-        color: $theme-color;
-    }
-
-    .login__btn {
-        display: block;
-        width: 100%;
-        margin-top: 12px;
     }
 }
 </style>
