@@ -17,7 +17,17 @@ const routes = [
                 path: 'home',
                 name: 'Home',
                 component: () =>
-                    import(/* webpackChunkName: "hall" */ '../views/hall/Home'),
+                    import(
+                        /* webpackChunkName: "navbar" */ '../views/hall/Home'
+                    ),
+            },
+            {
+                path: 'modifyPassword',
+                name: 'ModifyPassword',
+                component: () =>
+                    import(
+                        /* webpackChunkName: "navbar" */ '../views/hall/ModifyPassword'
+                    ),
             },
         ],
     },
@@ -26,6 +36,18 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
     routes,
+});
+
+router.beforeEach((to, from, next) => {
+    if (to.name !== 'Login') {
+        const token = sessionStorage.getItem('token');
+        if (!token) {
+            console.log('not logon');
+            router.push('Login');
+        }
+    }
+
+    next();
 });
 
 export default router;
