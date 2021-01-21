@@ -17,14 +17,38 @@
 </template>
 
 <script>
+import { onBeforeUpdate } from 'vue';
+import { useStore } from 'vuex';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
+import { getUserInfoRequest } from '../utils/request';
+import { ElLoading } from 'element-plus';
 
 export default {
     name: 'Hall',
     components: {
         Navbar,
         Sidebar,
+    },
+    setup() {
+        const store = useStore();
+
+        // 加载中
+        onBeforeUpdate(() => {
+            let loading = ElLoading.service({ target: '.hall__main' });
+            store.commit('setLoading', { loading });
+        });
+
+        let username = sessionStorage.getItem('username');
+
+        getUserInfoRequest(username).then((res) => {
+            if (res.state) {
+                store.commit('setPermission', { permission: res.permission });
+                store.state.loading.close();
+            } else {
+                console.log(res.msg);
+            }
+        });
     },
 };
 </script>
