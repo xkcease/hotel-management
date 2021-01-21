@@ -22,6 +22,7 @@ import {
     ElDropdown,
     ElDropdownItem,
     ElBadge,
+    ElLoading,
 } from 'element-plus';
 
 const app = createApp(App);
@@ -44,7 +45,8 @@ app.use(ElButton)
     .use(ElScrollbar)
     .use(ElDropdown)
     .use(ElDropdownItem)
-    .use(ElBadge);
+    .use(ElBadge)
+    .use(ElLoading);
 
 app.use(store)
     .use(router)

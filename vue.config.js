@@ -15,9 +15,6 @@ module.exports = {
             .rule('svg')
             .exclude.add(path.join(__dirname, 'src/icons'))
             .end();
-        //     .uses.clear()
-        // config.module.rules.delete('svg');
-
         config.module
             .rule('icons')
             .test(/\.svg$/)
