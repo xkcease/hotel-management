@@ -1,19 +1,28 @@
 import { createStore } from 'vuex';
+import { getUserInfoRequest } from '../utils/userRequest';
 
 const store = createStore({
     state: {
-        permission: -1,
-        loading: null,
+        permission: null,
     },
-    mutations: {
-        setPermission(state, payload) {
-            state.permission = payload.permission;
+    mutations: {},
+    actions: {
+        getPermission(context) {
+            return new Promise((resolve, reject) => {
+                let username = sessionStorage.getItem('username');
+
+                getUserInfoRequest(username).then((res) => {
+                    if (res.state) {
+                        context.state.permission = res.permission;
+                        resolve(res.permission);
+                    } else {
+                        console.log(res.msg);
+                        reject(res.msg);
+                    }
+                });
+            });
         },
-        setLoading(state, payload) {
-            state.loading = payload.loading;
-        }
     },
-    actions: {},
     modules: {},
 });
 
