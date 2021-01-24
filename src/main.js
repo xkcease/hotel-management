@@ -20,9 +20,19 @@ import {
     ElSubmenu,
     ElScrollbar,
     ElDropdown,
+    ElDropdownMenu,
     ElDropdownItem,
     ElBadge,
     ElLoading,
+    ElSelect,
+    ElOption,
+    ElMessage,
+    ElBreadcrumb,
+    ElBreadcrumbItem,
+    ElSkeleton,
+    ElTable,
+    ElTableColumn,
+    ElPopconfirm,
 } from 'element-plus';
 
 const app = createApp(App);
@@ -44,9 +54,19 @@ app.use(ElButton)
     .use(ElSubmenu)
     .use(ElScrollbar)
     .use(ElDropdown)
+    .use(ElDropdownMenu)
     .use(ElDropdownItem)
     .use(ElBadge)
-    .use(ElLoading);
+    .use(ElLoading)
+    .use(ElSelect)
+    .use(ElOption)
+    .use(ElMessage)
+    .use(ElBreadcrumb)
+    .use(ElBreadcrumbItem)
+    .use(ElSkeleton)
+    .use(ElTable)
+    .use(ElTableColumn)
+    .use(ElPopconfirm);
 
 app.use(store)
     .use(router)
