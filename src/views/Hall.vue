@@ -9,6 +9,18 @@
                     <Sidebar />
                 </el-aside>
                 <el-main class="hall__main">
+                    <el-breadcrumb
+                        class="hall__breadcrumb"
+                        separator-class="el-icon-arrow-right"
+                    >
+                        <el-breadcrumb-item
+                            v-for="(item, index) in list"
+                            :key="index"
+                            :to="item.path"
+                        >
+                            {{ item.meta.title }}
+                        </el-breadcrumb-item>
+                    </el-breadcrumb>
                     <router-view />
                 </el-main>
             </el-container>
@@ -17,12 +29,10 @@
 </template>
 
 <script>
-import { onBeforeUpdate } from 'vue';
-import { useStore } from 'vuex';
+import { reactive, toRefs, watch, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
-import { getUserInfoRequest } from '../utils/request';
-import { ElLoading } from 'element-plus';
 
 export default {
     name: 'Hall',
@@ -31,24 +41,32 @@ export default {
         Sidebar,
     },
     setup() {
-        const store = useStore();
+        const route = useRoute();
 
-        // 加载中
-        onBeforeUpdate(() => {
-            let loading = ElLoading.service({ target: '.hall__main' });
-            store.commit('setLoading', { loading });
+        const breadcrumb = reactive({
+            list: [],
         });
 
-        let username = sessionStorage.getItem('username');
-
-        getUserInfoRequest(username).then((res) => {
-            if (res.state) {
-                store.commit('setPermission', { permission: res.permission });
-                store.state.loading.close();
-            } else {
-                console.log(res.msg);
+        onMounted(() => {
+            breadcrumb.list = route.matched;
+            if (breadcrumb.list[1].name === 'Home') {
+                breadcrumb.list.splice(1, 1);
             }
         });
+
+        watch(
+            () => route.matched,
+            (value) => {
+                breadcrumb.list = value;
+                if (breadcrumb.list[1] && breadcrumb.list[1].name === 'Home') {
+                    breadcrumb.list.splice(1, 1);
+                }
+            }
+        );
+
+        return {
+            ...toRefs(breadcrumb),
+        };
     },
 };
 </script>
@@ -56,19 +74,29 @@ export default {
 <style lang="scss">
 .hall {
     .hall__header {
+        width: 100%;
+        position: fixed;
         background-color: #fff;
         box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+        z-index: 233;
     }
 
     .hall__aside {
         height: 100%;
         position: fixed;
+        top: 50px;
         background-color: $menu-bg;
         overflow: hidden;
     }
 
     .hall__main {
         margin-left: 200px;
+        margin-top: 50px;
+    }
+
+    .hall__breadcrumb {
+        font-size: 14px;
+        background-color: #fff;
     }
 }
 </style>
