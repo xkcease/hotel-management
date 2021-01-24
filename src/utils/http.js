@@ -3,7 +3,7 @@ import { useRouter } from 'vue-router';
 
 const instance = axios.create({
     baseURL: 'http://localhost:9092',
-    timeout: 5000,
+    timeout: 20000,
 });
 
 instance.interceptors.request.use(config => {
