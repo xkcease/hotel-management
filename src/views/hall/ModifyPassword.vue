@@ -12,7 +12,7 @@
             <el-form-item prop="password">
                 <el-input
                     v-model="form.password"
-                    placeholder="请输入密码"
+                    placeholder="请输入密码(长度4-20的数字或字母或下划线)"
                     show-password
                 >
                     <template #prefix>
@@ -43,18 +43,15 @@
 <script>
 import { reactive, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
-import { ElLoading } from 'element-plus';
-import { updatePasswordRequest } from '../../utils/request';
+import loading from '../../utils/loading';
+import { updatePasswordRequest } from '../../utils/userRequest';
 
 export default {
     name: 'ModifyPassword',
     setup() {
         const router = useRouter();
-        const store = useStore();
 
-        store.state.loading.close();
-
+        const formElem = ref(null);
         const form = reactive({
             idkey: '',
             password: '',
@@ -68,8 +65,8 @@ export default {
             password: [
                 { required: true, message: '密码不能为空', trigger: 'blur' },
                 {
-                    pattern: /\w{4,20}/,
-                    message: '长度4-20的数字或字母或汉字或下划线',
+                    pattern: /^\w{4,20}$/,
+                    message: '长度4-20的数字或字母或下划线',
                     trigger: 'blur',
                 },
             ],
@@ -102,29 +99,35 @@ export default {
         });
 
         const modify = () => {
-            let loading = ElLoading.service({ target: '.modify-password' });
+            formElem.value.validate((valid) => {
+                if (valid) {
+                    loading.start();
 
-            updatePasswordRequest({
-                username,
-                idkey: form.idkey,
-                password: form.password,
-            })
-                .then((res) => {
-                    if (res.state) {
-                        console.log(res.msg);
-                        router.push({ name: 'Login' });
-                    } else {
-                        errorMsg.value = res.msg;
-                    }
-                    loading.close();
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+                    updatePasswordRequest({
+                        username,
+                        idkey: form.idkey,
+                        password: form.password,
+                    })
+                        .then((res) => {
+                            if (res.state) {
+                                console.log(res.msg);
+                                router.push({ name: 'Login' });
+                            } else {
+                                errorMsg.value = res.msg;
+                            }
+                            loading.close();
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                            loading.close();
+                        });
+                }
+            });
         };
 
         return {
             form,
+            formElem,
             rules,
             modify,
             errorMsg,

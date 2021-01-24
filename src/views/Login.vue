@@ -40,7 +40,7 @@
 <script>
 import { ref, reactive, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { loginRequest } from '../utils/request';
+import { loginRequest } from '../utils/userRequest';
 
 export default {
     name: 'Login',
@@ -83,7 +83,7 @@ export default {
                                 );
 
                                 console.log('logout');
-                                router.push({ name: 'Home' });
+                                router.push({ name: 'Hall' });
                             } else {
                                 console.log(res.msg);
                                 errorMsg.value = res.msg;

@@ -14,10 +14,14 @@
                     <i class="el-icon-arrow-down"></i>
                 </span>
                 <template #dropdown>
-                    <el-dropdown-item @click="toModifyPassword">
-                        修改密码
-                    </el-dropdown-item>
-                    <el-dropdown-item @click="logout">退出</el-dropdown-item>
+                    <el-dropdown-menu>
+                        <el-dropdown-item @click="toModifyPassword">
+                            修改密码
+                        </el-dropdown-item>
+                        <el-dropdown-item @click="logout"
+                            >退出</el-dropdown-item
+                        >
+                    </el-dropdown-menu>
                 </template>
             </el-dropdown>
         </div>
