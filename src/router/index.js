@@ -101,6 +101,12 @@ const router = createRouter({
 });
 
 let hasPermission = false;
+function verifyPermission(route, permission) {
+    if (route.meta && route.meta.role) {
+        return route.meta.role.some(role => permission <= role);
+    }
+    return true;
+}
 
 router.beforeEach(async (to, from, next) => {
     const token = sessionStorage.getItem('token');
@@ -112,9 +118,11 @@ router.beforeEach(async (to, from, next) => {
         }
 
         let permission = await store.dispatch('getPermission');
-        if (!permission && !hasPermission) {
+        if (permission && !hasPermission) {
             for (let route of asyncRoutes) {
-                router.addRoute('Hall', route);
+                if (verifyPermission(route, permission)) {
+                    router.addRoute('Hall', route);
+                }
             }
             hasPermission = true;
             return next({ ...to, replace: true });
@@ -124,7 +132,6 @@ router.beforeEach(async (to, from, next) => {
             return next({ name: 'Home' });
         }
     }
-    console.log(routes);
     next();
 });
 
