@@ -3,6 +3,15 @@ const path = require('path');
 module.exports = {
     devServer: {
         port: 9090,
+        proxy: {
+            '/api': {
+                target: 'http://localhost:9092',
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/api': '/',
+                },
+            },
+        },
     },
     pluginOptions: {
         'style-resources-loader': {
