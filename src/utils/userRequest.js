@@ -8,7 +8,7 @@ function registerRequest(form) {
     return axiosPost('/register', form);
 }
 
-function getUsers(keywordObj = {}) {
+function getUsersRequest(keywordObj = {}) {
     return axiosPost('/getUsers', keywordObj);
 }
 
@@ -31,7 +31,7 @@ function deleteUserRequest(username) {
 export {
     loginRequest,
     registerRequest,
-    getUsers,
+    getUsersRequest,
     getUserInfoRequest,
     updatePasswordRequest,
     updatePermissionRequest,
