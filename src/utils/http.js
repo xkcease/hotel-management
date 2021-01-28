@@ -29,12 +29,13 @@ instance.interceptors.response.use(response => {
     return response;
 });
 
-function axiosGet(url, params) {
+function axiosGet(url, params, headers) {
     return new Promise((resolve, reject) => {
         instance({
             url: url,
             method: 'get',
             params: { ...params },
+            headers: { ...headers },
         })
             .then(res => {
                 resolve(res.data);
@@ -61,4 +62,22 @@ function axiosPost(url, data) {
     });
 }
 
-export { axiosGet, axiosPost };
+function axiosPostFile(url, data) {
+    return new Promise((resolve, reject) => {
+        instance({
+            url: url,
+            method: 'post',
+            headers: { 'Content-Type': `multipart/form-data;` },
+            data: data,
+            withCredentials: true,
+        })
+            .then(res => {
+                resolve(res.data);
+            })
+            .catch(err => {
+                reject(err);
+            });
+    });
+}
+
+export { axiosGet, axiosPost, axiosPostFile };
