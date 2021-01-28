@@ -22,12 +22,14 @@
                 <el-menu-item index="2-3">已退房</el-menu-item>
                 <el-menu-item index="2-4">全部</el-menu-item>
             </el-submenu>
-            <el-submenu index="3" v-if="permission <= 1">
+            <el-submenu index="3">
                 <template #title
                     ><h2 class="sidebar__item">房间管理</h2></template
                 >
                 <el-menu-item index="roomList">查看房间</el-menu-item>
-                <el-menu-item index="addRoom">添加新房间</el-menu-item>
+                <el-menu-item index="addRoom" v-if="permission <= 1">
+                    添加新房间
+                </el-menu-item>
             </el-submenu>
             <el-submenu index="4" v-if="permission === 0">
                 <template #title

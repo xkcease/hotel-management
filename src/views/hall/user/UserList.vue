@@ -77,7 +77,7 @@
 import { reactive, toRefs, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import {
-    getUsers,
+    getUsersRequest,
     updatePermissionRequest,
     deleteUserRequest,
 } from '@/utils/userRequest';
@@ -95,7 +95,7 @@ export default {
         loading.start();
 
         // 获取用户
-        getUsers()
+        getUsersRequest()
             .then((res) => {
                 for (let user of res) {
                     user.text = text[user.permission];
