@@ -29,10 +29,12 @@ import {
     ElMessage,
     ElBreadcrumb,
     ElBreadcrumbItem,
-    ElSkeleton,
     ElTable,
     ElTableColumn,
     ElPopconfirm,
+    ElImage,
+    ElUpload,
+    ElDialog,
 } from 'element-plus';
 
 const app = createApp(App);
@@ -63,10 +65,12 @@ app.use(ElButton)
     .use(ElMessage)
     .use(ElBreadcrumb)
     .use(ElBreadcrumbItem)
-    .use(ElSkeleton)
     .use(ElTable)
     .use(ElTableColumn)
-    .use(ElPopconfirm);
+    .use(ElPopconfirm)
+    .use(ElImage)
+    .use(ElUpload)
+    .use(ElDialog);
 
 app.use(store)
     .use(router)
