@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { getUserInfoRequest } from '../utils/userRequest';
+import { getAdminInfoRequest } from '../utils/adminRequest';
 
 const store = createStore({
     state: {
@@ -11,7 +11,7 @@ const store = createStore({
             return new Promise((resolve, reject) => {
                 let username = sessionStorage.getItem('username');
 
-                getUserInfoRequest(username).then((res) => {
+                getAdminInfoRequest(username).then((res) => {
                     if (res.state) {
                         context.state.permission = res.permission;
                         resolve(res.permission);

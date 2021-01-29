@@ -53,7 +53,7 @@ const asyncRoutes = [
         name: 'RoomList',
         meta: {
             title: '房间列表',
-            role: [0, 1],
+            role: [0, 1, 2],
         },
         component: () =>
             import(
@@ -71,26 +71,40 @@ const asyncRoutes = [
             import(/* webpackChunkName: "room" */ '../views/hall/room/AddRoom'),
     },
     {
-        path: 'userList',
-        name: 'UserList',
+        path: 'modifyRoom',
+        name: 'ModifyRoom',
+        meta: {
+            title: '更改房间',
+            role: [0, 1],
+        },
+        component: () =>
+            import(
+                /* webpackChunkName: "room" */ '../views/hall/room/ModifyRoom'
+            ),
+    },
+    {
+        path: 'adminList',
+        name: 'AdminList',
         meta: {
             title: '用户列表',
             role: [0],
         },
         component: () =>
             import(
-                /* webpackChunkName: "user" */ '../views/hall/user/UserList'
+                /* webpackChunkName: "admin" */ '../views/hall/admin/AdminList'
             ),
     },
     {
-        path: 'addUser',
-        name: 'AddUser',
+        path: 'addAdmin',
+        name: 'AddAdmin',
         meta: {
             title: '注册新用户',
             role: [0],
         },
         component: () =>
-            import(/* webpackChunkName: "user" */ '../views/hall/user/AddUser'),
+            import(
+                /* webpackChunkName: "admin" */ '../views/hall/admin/AddAdmin'
+            ),
     },
     { path: '/:pathMatch(.*)*', redirect: { name: '404' }, hidden: true },
 ];
@@ -118,7 +132,7 @@ router.beforeEach(async (to, from, next) => {
         }
 
         let permission = await store.dispatch('getPermission');
-        if (permission && !hasPermission) {
+        if (!hasPermission) {
             for (let route of asyncRoutes) {
                 if (verifyPermission(route, permission)) {
                     router.addRoute('Hall', route);
@@ -130,9 +144,16 @@ router.beforeEach(async (to, from, next) => {
     } else {
         if (to.name === 'Login' && token) {
             return next({ name: 'Home' });
+        } else {
+            hasPermission = false;
         }
     }
     next();
 });
+
+export function resetRouter() {
+    const newRouter = createRouter();
+    router.matcher = newRouter.matcher;
+}
 
 export default router;
