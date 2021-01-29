@@ -1,5 +1,5 @@
 <template>
-    <div class="add-user">
+    <div class="add-admin">
         <el-form :model="form" :rules="rules" ref="formElem">
             <p class="form__msg">{{ errorMsg }}</p>
             <el-form-item prop="username">
@@ -53,7 +53,7 @@
                         :value="item.value"
                     ></el-option>
                 </el-select>
-                <span class="add-user__detail">{{ detail }}</span>
+                <span class="add-admin__detail">{{ detail }}</span>
             </el-form-item>
             <el-form-item>
                 <el-button class="form__btn" type="primary" @click="register"
@@ -67,11 +67,11 @@
 <script>
 import { reactive, ref, watch, computed } from 'vue';
 import loading from '@/utils/loading';
-import { registerRequest } from '@/utils/userRequest';
+import { registerRequest } from '@/utils/adminRequest';
 import { ElMessage } from 'element-plus';
 
 export default {
-    name: 'AddUser',
+    name: 'AddAdmin',
     setup() {
         const formElem = ref(null);
         const form = reactive({
@@ -189,11 +189,11 @@ export default {
 </script>
 
 <style lang="scss">
-.add-user {
+.add-admin {
     width: 30%;
     margin: 50px auto;
 
-    .add-user__detail {
+    .add-admin__detail {
         font-size: 12px;
         color: $info-color;
         margin-left: 12px;

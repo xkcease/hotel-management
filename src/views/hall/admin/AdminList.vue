@@ -1,7 +1,7 @@
 <template>
-    <div class="user-list">
+    <div class="admin-list">
         <el-table :data="list">
-            <el-table-column label="Id" prop="id" sortable></el-table-column>
+            <el-table-column label="Id" prop="aid" sortable></el-table-column>
             <el-table-column
                 label="用户名"
                 prop="username"
@@ -58,7 +58,7 @@
                             confirmButtonText="是"
                             cancelButtonText="否"
                             title="确定要删除吗？"
-                            @confirm="deleteUser(scope.$index)"
+                            @confirm="deleteAdmin(scope.$index)"
                         >
                             <template #reference>
                                 <el-button size="mini" type="danger">
@@ -77,14 +77,14 @@
 import { reactive, toRefs, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import {
-    getUsersRequest,
+    getAdminsRequest,
     updatePermissionRequest,
-    deleteUserRequest,
-} from '@/utils/userRequest';
+    deleteAdminRequest,
+} from '@/utils/adminRequest';
 import loading from '@/utils/loading';
 
 export default {
-    name: 'UserList',
+    name: 'AdminList',
     setup() {
         const tableData = reactive({
             origin: [],
@@ -95,10 +95,10 @@ export default {
         loading.start();
 
         // 获取用户
-        getUsersRequest()
+        getAdminsRequest()
             .then((res) => {
-                for (let user of res) {
-                    user.text = text[user.permission];
+                for (let admin of res) {
+                    admin.text = text[admin.permission];
                 }
                 tableData.origin = res;
                 tableData.list = res;
@@ -139,10 +139,10 @@ export default {
         };
 
         // 删除用户
-        const deleteUser = (index) => {
+        const deleteAdmin = (index) => {
             loading.start();
 
-            deleteUserRequest(tableData.list[index].username)
+            deleteAdminRequest(tableData.list[index].username)
                 .then((res) => {
                     if (res.state) {
                         tableData.list.splice(index, 1);
@@ -165,7 +165,7 @@ export default {
         // 搜索
         let keyword = ref('');
         const search = () => {
-            const idReg = /^\d+$/;
+            const aidReg = /^\d+$/;
             const usernameReg = /^[0-9a-zA-z]+$/;
             const textReg = /^[\u4e00-\u9fa5]+$/;
             const keywordReg = new RegExp(keyword.value);
@@ -173,17 +173,17 @@ export default {
             const searchArray = [];
             let searchKey = '';
 
-            if (idReg.test(keyword.value)) {
-                searchKey = 'id';
+            if (aidReg.test(keyword.value)) {
+                searchKey = 'aid';
             } else if (usernameReg.test(keyword.value)) {
                 searchKey = 'username';
             } else if (textReg.test(keyword.value)) {
                 searchKey = 'text';
             }
 
-            for (let user of tableData.origin) {
-                if (keywordReg.test(user[searchKey])) {
-                    searchArray.push(user);
+            for (let admin of tableData.origin) {
+                if (keywordReg.test(admin[searchKey])) {
+                    searchArray.push(admin);
                 }
             }
 
@@ -194,7 +194,7 @@ export default {
             ...toRefs(tableData),
             sortPermission,
             modifyPermission,
-            deleteUser,
+            deleteAdmin,
             keyword,
             search,
         };
@@ -203,7 +203,7 @@ export default {
 </script>
 
 <style lang="scss">
-.user-list {
+.admin-list {
     margin: 30px 50px;
     border: 1px solid #ebeef5;
     padding: 0 20px;
