@@ -8,12 +8,12 @@ function registerRequest(form) {
     return axiosPost('/register', form);
 }
 
-function getUsersRequest(keywordObj = {}) {
-    return axiosPost('/getUsers', keywordObj);
+function getAdminsRequest(keywordObj = {}) {
+    return axiosPost('/getAdmins', keywordObj);
 }
 
-function getUserInfoRequest(username) {
-    return axiosPost('/userInfo', { username });
+function getAdminInfoRequest(username) {
+    return axiosPost('/adminInfo', { username });
 }
 
 function updatePasswordRequest(obj) {
@@ -24,16 +24,16 @@ function updatePermissionRequest(username, permission) {
     return axiosPost('/updatePermission', { username, permission });
 }
 
-function deleteUserRequest(username) {
-    return axiosPost('/deleteUser', { username });
+function deleteAdminRequest(username) {
+    return axiosPost('/deleteAdmin', { username });
 }
 
 export {
     loginRequest,
     registerRequest,
-    getUsersRequest,
-    getUserInfoRequest,
+    getAdminsRequest,
+    getAdminInfoRequest,
     updatePasswordRequest,
     updatePermissionRequest,
-    deleteUserRequest,
+    deleteAdminRequest,
 };
