@@ -1,6 +1,6 @@
 <template>
     <div class="room-list">
-        <el-table :data="list">
+        <el-table :data="list" :default-sort="defaultSort">
             <el-table-column label="图片">
                 <template #default="scope">
                     <el-image
@@ -26,7 +26,21 @@
             <el-table-column label="浴室" prop="showerText"></el-table-column>
             <el-table-column label="电视" prop="tvText"></el-table-column>
             <el-table-column label="其他" prop="extra"></el-table-column>
-            <el-table-column label="状态" prop="state"></el-table-column>
+            <el-table-column>
+                <template #header>
+                    <el-checkbox v-model="stateChecked" @change="showAvailable">
+                        状态
+                    </el-checkbox>
+                </template>
+                <template #default="scope">
+                    <el-tag
+                        :type="scope.row.state ? 'danger' : 'success'"
+                        effect="dark"
+                    >
+                        {{ scope.row.stateText }}
+                    </el-tag>
+                </template>
+            </el-table-column>
             <el-table-column align="right">
                 <template #header>
                     <el-input
@@ -112,9 +126,12 @@ export default {
         const tableData = reactive({
             origin: [],
             list: [],
+            search: [],
         });
         const typeText = ['大床间', '单人间', '双人间'];
         const optionsText = ['无', '有'];
+        const stateText = ['可使用', '已预订'];
+        const defaultSort = { prop: 'number', order: 'ascending' };
 
         loading.start();
 
@@ -125,9 +142,11 @@ export default {
                     room.typeText = typeText[room.type];
                     room.showerText = optionsText[room.shower];
                     room.tvText = optionsText[room.tv];
+                    room.stateText = stateText[room.state];
                 }
                 tableData.origin = res;
                 tableData.list = res;
+                tableData.search = res;
 
                 loading.close();
             })
@@ -174,17 +193,31 @@ export default {
                 });
         };
 
+        const stateChecked = ref(false);
+        const showAvailable = () => {
+            if (stateChecked.value) {
+                tableData.list = tableData.list.filter((room) => {
+                    return room.state === 0;
+                });
+            } else {
+                tableData.list = tableData.search;
+            }
+        };
+
         // 搜索
         let keyword = ref('');
         const search = () => {
             const numberReg = /^\d+$/;
+            const typeTextReg = /^[\u4e00-\u9fa5]+$/;
             const keywordReg = new RegExp(keyword.value);
 
-            const searchArray = [];
+            let searchArray = [];
             let searchKey = '';
 
             if (numberReg.test(keyword.value)) {
                 searchKey = 'number';
+            } else if (typeTextReg.test(keyword.value)) {
+                searchKey = 'typeText';
             }
 
             for (let room of tableData.origin) {
@@ -193,15 +226,25 @@ export default {
                 }
             }
 
+            if (stateChecked.value) {
+                searchArray = searchArray.filter((room) => {
+                    return room.state === 0;
+                });
+            }
+
             tableData.list = searchArray;
+            tableData.search = searchArray;
         };
 
         return {
             permission,
             ...toRefs(tableData),
             sortType,
+            defaultSort,
             toModifyRoom,
             deleteRoom,
+            stateChecked,
+            showAvailable,
             keyword,
             search,
         };

@@ -21,6 +21,7 @@
                         v-model="form.password"
                         placeholder="请输入密码"
                         show-password
+                        @keyup.enter="login"
                     >
                         <template #prefix>
                             <i class="el-icon-lock form__icon"></i>
@@ -40,7 +41,7 @@
 <script>
 import { ref, reactive, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { loginRequest } from '../utils/userRequest';
+import { loginRequest } from '../utils/adminRequest';
 
 export default {
     name: 'Login',

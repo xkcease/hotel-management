@@ -44,7 +44,7 @@
 import { reactive, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import loading from '../../utils/loading';
-import { updatePasswordRequest } from '../../utils/userRequest';
+import { updatePasswordRequest } from '../../utils/adminRequest';
 
 export default {
     name: 'ModifyPassword',
@@ -111,6 +111,7 @@ export default {
                         .then((res) => {
                             if (res.state) {
                                 console.log(res.msg);
+                                sessionStorage.clear();
                                 router.push({ name: 'Login' });
                             } else {
                                 errorMsg.value = res.msg;
