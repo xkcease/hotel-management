@@ -31,4 +31,4 @@ export {
     getRoomInfoRequest,
     updateRoomRequest,
     deleteRoomRequest,
-}
+};
