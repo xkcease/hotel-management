@@ -49,6 +49,78 @@ const routes = [
 
 const asyncRoutes = [
     {
+        path: 'reservedOrder',
+        name: 'ReservedOrder',
+        meta: {
+            title: '未入住',
+            role: [0, 1, 2],
+        },
+        component: () =>
+            import(
+                /* webpackChunkName: "order" */ '../views/hall/order/ReservedOrder'
+            ),
+    },
+    {
+        path: 'occupieddOrder',
+        name: 'OccupiedOrder',
+        meta: {
+            title: '已入住',
+            role: [0, 1, 2],
+        },
+        component: () =>
+            import(
+                /* webpackChunkName: "order" */ '../views/hall/order/OccupiedOrder'
+            ),
+    },
+    {
+        path: 'completedOrder',
+        name: 'CompletedOrder',
+        meta: {
+            title: '已退房',
+            role: [0, 1, 2],
+        },
+        component: () =>
+            import(
+                /* webpackChunkName: "order" */ '../views/hall/order/CompletedOrder'
+            ),
+    },
+    {
+        path: 'modifyOrder',
+        name: 'ModifyOrder',
+        meta: {
+            title: '修改订单',
+            role: [0, 1, 2],
+        },
+        component: () =>
+            import(
+                /* webpackChunkName: "order" */ '../views/hall/order/ModifyOrder'
+            ),
+    },
+    {
+        path: 'checkIn',
+        name: 'CheckIn',
+        meta: {
+            title: '办理入住',
+            role: [0, 1, 2],
+        },
+        component: () =>
+            import(
+                /* webpackChunkName: "order" */ '../views/hall/order/CheckIn'
+            ),
+    },
+    {
+        path: 'checkOut',
+        name: 'CheckOut',
+        meta: {
+            title: '办理退房',
+            role: [0, 1, 2],
+        },
+        component: () =>
+            import(
+                /* webpackChunkName: "order" */ '../views/hall/order/CheckOut'
+            ),
+    },
+    {
         path: 'roomList',
         name: 'RoomList',
         meta: {
@@ -80,6 +152,18 @@ const asyncRoutes = [
         component: () =>
             import(
                 /* webpackChunkName: "room" */ '../views/hall/room/ModifyRoom'
+            ),
+    },
+    {
+        path: 'modifyPrice',
+        name: 'ModifyPrice',
+        meta: {
+            title: '修改价格',
+            role: [0, 1],
+        },
+        component: () =>
+            import(
+                /* webpackChunkName: "room" */ '../views/hall/room/ModifyPrice'
             ),
     },
     {
