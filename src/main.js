@@ -35,7 +35,16 @@ import {
     ElImage,
     ElUpload,
     ElDialog,
+    ElTag,
+    ElCheckbox,
+    ElDivider,
+    ElDatePicker,
 } from 'element-plus';
+import lang from 'element-plus/lib/locale/lang/zh-cn';
+import 'dayjs/locale/zh-cn';
+import locale from 'element-plus/lib/locale';
+
+locale.use(lang);
 
 const app = createApp(App);
 
@@ -70,7 +79,11 @@ app.use(ElButton)
     .use(ElPopconfirm)
     .use(ElImage)
     .use(ElUpload)
-    .use(ElDialog);
+    .use(ElDialog)
+    .use(ElTag)
+    .use(ElCheckbox)
+    .use(ElDivider)
+    .use(ElDatePicker);
 
 app.use(store)
     .use(router)
