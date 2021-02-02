@@ -17,10 +17,9 @@
                 <template #title>
                     <h2 class="sidebar__item">订单管理</h2>
                 </template>
-                <el-menu-item index="2-1">未入住</el-menu-item>
-                <el-menu-item index="2-2">已入住</el-menu-item>
-                <el-menu-item index="2-3">已退房</el-menu-item>
-                <el-menu-item index="2-4">全部</el-menu-item>
+                <el-menu-item index="reservedOrder">未入住</el-menu-item>
+                <el-menu-item index="occupieddOrder">已入住</el-menu-item>
+                <el-menu-item index="completedOrder">已退房</el-menu-item>
             </el-submenu>
             <el-submenu index="3">
                 <template #title
@@ -30,13 +29,16 @@
                 <el-menu-item index="addRoom" v-if="permission <= 1">
                     添加新房间
                 </el-menu-item>
+                <el-menu-item index="modifyPrice" v-if="permission === 0">
+                    修改价格
+                </el-menu-item>
             </el-submenu>
             <el-submenu index="4" v-if="permission === 0">
                 <template #title
                     ><h2 class="sidebar__item">账号管理</h2></template
                 >
-                <el-menu-item index="userList">查看用户</el-menu-item>
-                <el-menu-item index="addUser">注册新用户</el-menu-item>
+                <el-menu-item index="adminList">查看用户</el-menu-item>
+                <el-menu-item index="addAdmin">注册新用户</el-menu-item>
             </el-submenu>
         </el-menu>
     </el-scrollbar>

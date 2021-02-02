@@ -29,23 +29,17 @@
                             <template #dropdown>
                                 <el-dropdown-menu>
                                     <el-dropdown-item
-                                        @click="
-                                            modifyPermission(scope.$index, 2)
-                                        "
+                                        @click="modifyPermission(scope.row, 2)"
                                     >
                                         普通管理员
                                     </el-dropdown-item>
                                     <el-dropdown-item
-                                        @click="
-                                            modifyPermission(scope.$index, 1)
-                                        "
+                                        @click="modifyPermission(scope.row, 1)"
                                     >
                                         高级管理员
                                     </el-dropdown-item>
                                     <el-dropdown-item
-                                        @click="
-                                            modifyPermission(scope.$index, 0)
-                                        "
+                                        @click="modifyPermission(scope.row, 0)"
                                     >
                                         超级管理员
                                     </el-dropdown-item>
@@ -58,7 +52,7 @@
                             confirmButtonText="是"
                             cancelButtonText="否"
                             title="确定要删除吗？"
-                            @confirm="deleteAdmin(scope.$index)"
+                            @confirm="deleteAdmin(scope.row)"
                         >
                             <template #reference>
                                 <el-button size="mini" type="danger">
@@ -74,7 +68,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, ref } from 'vue';
+import { reactive, toRefs, ref, inject } from 'vue';
 import { ElMessage } from 'element-plus';
 import {
     getAdminsRequest,
@@ -86,6 +80,8 @@ import loading from '@/utils/loading';
 export default {
     name: 'AdminList',
     setup() {
+        const reload = inject('reload');
+
         const tableData = reactive({
             origin: [],
             list: [],
@@ -115,14 +111,14 @@ export default {
         };
 
         // 修改权限
-        const modifyPermission = (index, permission) => {
+        const modifyPermission = (admin, permission) => {
             loading.start();
 
-            updatePermissionRequest(tableData.list[index].username, permission)
+            updatePermissionRequest(admin.username, permission)
                 .then((res) => {
                     if (res.state) {
-                        tableData.list[index].permission = permission;
-                        tableData.list[index].text = text[permission];
+                        admin.permission = permission;
+                        admin.text = text[permission];
                         tableData.origin = tableData.list;
                         ElMessage.success(res.msg);
                     } else {
@@ -139,15 +135,19 @@ export default {
         };
 
         // 删除用户
-        const deleteAdmin = (index) => {
+        const deleteAdmin = (admin) => {
             loading.start();
 
-            deleteAdminRequest(tableData.list[index].username)
+            deleteAdminRequest(admin.username)
                 .then((res) => {
                     if (res.state) {
+                        let index = tableData.list.findIndex((value) => {
+                            return admin.username === value.username;
+                        });
                         tableData.list.splice(index, 1);
                         tableData.origin = tableData.list;
                         ElMessage.success(res.msg);
+                        reload();
                     } else {
                         ElMessage.error(res.msg);
                     }

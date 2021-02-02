@@ -21,7 +21,7 @@
                             {{ item.meta.title }}
                         </el-breadcrumb-item>
                     </el-breadcrumb>
-                    <router-view />
+                    <router-view v-if="isRouterAlive" />
                 </el-main>
             </el-container>
         </el-container>
@@ -29,7 +29,15 @@
 </template>
 
 <script>
-import { reactive, toRefs, watch, onMounted } from 'vue';
+import {
+    reactive,
+    toRefs,
+    ref,
+    watch,
+    onMounted,
+    nextTick,
+    provide,
+} from 'vue';
 import { useRoute } from 'vue-router';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
@@ -64,8 +72,19 @@ export default {
             }
         );
 
+        const isRouterAlive = ref(true);
+        const reload = () => {
+            isRouterAlive.value = false;
+            nextTick(() => {
+                isRouterAlive.value = true;
+            });
+        };
+
+        provide('reload', reload);
+
         return {
             ...toRefs(breadcrumb),
+            isRouterAlive,
         };
     },
 };
