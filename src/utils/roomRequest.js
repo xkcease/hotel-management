@@ -20,8 +20,8 @@ function updateRoomRequest(form) {
     return axiosPost('/updateRoom', form);
 }
 
-function deleteRoomRequest(number) {
-    return axiosPost('/deleteRoom', { number });
+function deleteRoomRequest(number, img) {
+    return axiosPost('/deleteRoom', { number, img });
 }
 
 export {
