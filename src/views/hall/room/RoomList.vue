@@ -13,12 +13,12 @@
                 </template>
             </el-table-column>
             <el-table-column
-                label="房间号"
+                label="房号"
                 prop="number"
                 sortable
             ></el-table-column>
             <el-table-column
-                label="房间类型"
+                label="类型"
                 prop="typeText"
                 :sort-method="sortType"
                 sortable
@@ -55,7 +55,8 @@
                         <el-button
                             size="mini"
                             type="primary"
-                            style="margin-right: 6px"
+                            @click="toCheckIn(scope.row)"
+                            :disabled="Boolean(scope.row.state)"
                         >
                             办理入住
                         </el-button>
@@ -85,7 +86,7 @@
                                             confirmButtonText="是"
                                             cancelButtonText="否"
                                             title="确定要删除吗？"
-                                            @confirm="deleteRoom(scope.$index)"
+                                            @confirm="deleteRoom(scope.row)"
                                         >
                                             <template #reference>
                                                 <el-button
@@ -108,7 +109,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, ref, watchEffect } from 'vue';
+import { reactive, toRefs, ref, watchEffect, inject } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import { ElMessage } from 'element-plus';
@@ -122,6 +123,8 @@ export default {
         const route = useRoute();
         const store = useStore();
         const permission = store.state.permission;
+
+        const reload = inject('reload');
 
         const tableData = reactive({
             origin: [],
@@ -156,7 +159,7 @@ export default {
             });
 
         watchEffect(() => {
-            if (route.params.img) {
+            if (route.params.changed) {
                 router.go(0);
             }
         });
@@ -169,16 +172,23 @@ export default {
             router.push({ name: 'ModifyRoom', query: { number: room.number } });
         };
 
-        // 删除用户
-        const deleteRoom = (index) => {
-            loading.start();
+        const toCheckIn = (room) => {
+            router.push({ name: 'CheckIn', query: { number: room.number } });
+        };
 
-            deleteRoomRequest(tableData.list[index].number)
+        // 删除房间
+        const deleteRoom = (room) => {
+            loading.start();
+            deleteRoomRequest(room.number, room.img)
                 .then((res) => {
                     if (res.state) {
+                        let index = tableData.list.findIndex((value) => {
+                            return room.number === value.number;
+                        });
                         tableData.list.splice(index, 1);
                         tableData.origin = tableData.list;
                         ElMessage.success(res.msg);
+                        reload();
                     } else {
                         ElMessage.error(res.msg);
                     }
@@ -207,7 +217,7 @@ export default {
         // 搜索
         let keyword = ref('');
         const search = () => {
-            const numberReg = /^\d+$/;
+            const numberReg = /^[0-9a-zA-Z]+$/;
             const typeTextReg = /^[\u4e00-\u9fa5]+$/;
             const keywordReg = new RegExp(keyword.value);
 
@@ -242,6 +252,7 @@ export default {
             sortType,
             defaultSort,
             toModifyRoom,
+            toCheckIn,
             deleteRoom,
             stateChecked,
             showAvailable,

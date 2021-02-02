@@ -8,7 +8,7 @@
             label-width="80px"
         >
             <p class="form__msg">{{ errorMsg }}</p>
-            <el-form-item prop="number" label="房间号">
+            <el-form-item prop="number" label="房号">
                 <el-input
                     v-model="form.number"
                     placeholder="长度3-8的数字/字母"
@@ -219,9 +219,10 @@ export default {
             formData.append('oldImgName', upload.oldImgName);
 
             uploadImgRequest(formData).then((res) => {
+                loading.close();
                 obj.onSuccess();
                 console.log(res.msg);
-                router.push({ name: 'RoomList', params: { img: res.img } });
+                router.push({ name: 'RoomList', params: { changed: true } });
             });
         };
 
