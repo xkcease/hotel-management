@@ -1,25 +1,27 @@
 <template>
     <div class="home">
-        <p>this is home</p>
+        <el-calendar v-model="date.value"> </el-calendar>
     </div>
 </template>
 
 <script>
-import { onMounted } from 'vue';
-import { useStore } from 'vuex';
-// import loading from '../../utils/loading';
+import { reactive } from 'vue';
 
 export default {
     name: 'Home',
     setup() {
-        // loading.close();
-        onMounted(() => {
-            console.log('home');
+        const date = reactive({
+            value: new Date(),
         });
-
-        console.log(useStore().state.permission);
-
-        return {};
+        console.log(123213);
+        return {
+            date,
+        };
     },
 };
 </script>
+<style lang="scss">
+.home {
+    margin: 10px auto;
+}
+</style>
