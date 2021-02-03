@@ -52,7 +52,7 @@ npm run build
 17. 办理入住
 18. 办理退房
 19. 修改价格
-20. to be continued
+20. 主页
 
 
 
