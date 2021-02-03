@@ -20,12 +20,12 @@ function checkInRequest(obj, guests) {
     return axiosPost('/checkIn', { obj, guests });
 }
 
-function checkOutRequest(oid) {
-    return axiosPost('/checkOut', { oid });
+function checkOutRequest(oid, rid) {
+    return axiosPost('/checkOut', { oid, rid });
 }
 
-function deleteOrderRequest(oid) {
-    return axiosPost('/deleteOrder', { oid });
+function deleteOrderRequest(oid, rid) {
+    return axiosPost('/deleteOrder', { oid, rid });
 }
 
 export {
