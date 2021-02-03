@@ -1,6 +1,6 @@
 <template>
     <div class="completed-order">
-        <el-table :data="list" :default-sort="defaultSort">
+        <el-table :data="list" :default-sort="defaultSort" stripe>
             <el-table-column
                 label="订单号"
                 prop="oid"

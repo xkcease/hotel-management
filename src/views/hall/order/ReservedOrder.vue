@@ -1,6 +1,6 @@
 <template>
     <div class="reserved-order">
-        <el-table :data="list" :default-sort="defaultSort">
+        <el-table :data="list" :default-sort="defaultSort" stripe>
             <el-table-column
                 label="订单号"
                 prop="oid"
@@ -18,6 +18,8 @@
             <el-table-column
                 label="预订时间"
                 prop="reservationDate"
+                sortable
+                :sort-method="sortReserved"
             ></el-table-column>
             <el-table-column align="right">
                 <template #header>
@@ -87,7 +89,12 @@ export default {
             origin: [],
             list: [],
         });
-        const defaultSort = { prop: 'oid', order: 'ascending' };
+
+        const defaultSort = { prop: 'reservationDate', order: 'ascending' };
+
+        const sortReserved = (a, b) => {
+            return a.reservation_time - b.reservation_time;
+        };
 
         loading.start();
 
@@ -131,16 +138,17 @@ export default {
 
         const deleteOder = (order) => {
             loading.start();
-            deleteOrderRequest(order.oid)
+            deleteOrderRequest(order.oid, order.rid)
                 .then((res) => {
                     if (res.state) {
                         let index = tableData.list.findIndex((value) => {
                             return order.oid === value.oid;
                         });
-
                         tableData.list.splice(index, 1);
                         tableData.origin = tableData.list;
                         ElMessage.success(res.msg);
+                        console.log(order);
+                        console.log(tableData.list);
 
                         reload();
                     } else {
@@ -194,6 +202,7 @@ export default {
         return {
             ...toRefs(tableData),
             defaultSort,
+            sortReserved,
             toModifyOrder,
             toCheckIn,
             deleteOder,

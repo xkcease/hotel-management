@@ -125,6 +125,7 @@ export default {
 
         const orderInfo = reactive({
             oid: null,
+            rid: null,
             reservationDate: '',
             during: 0,
             checkInTime: '',
@@ -140,6 +141,7 @@ export default {
                     );
 
                     orderInfo.oid = res.order.oid;
+                    orderInfo.rid = res.order.rid;
                     orderInfo.reservationDate = date + ' 至 ' + nextDate;
                     orderInfo.during = res.order.reservation_during;
                     orderInfo.checkInTime = getFormatDateTime(
@@ -159,7 +161,7 @@ export default {
         }
 
         const submit = () => {
-            checkOutRequest(orderInfo.oid)
+            checkOutRequest(orderInfo.oid, orderInfo.rid)
                 .then((res) => {
                     if (res.state) {
                         ElMessage.success(res.msg);
