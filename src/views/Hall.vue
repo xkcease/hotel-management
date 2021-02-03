@@ -56,7 +56,7 @@ export default {
         });
 
         onMounted(() => {
-            breadcrumb.list = route.matched;
+            breadcrumb.list = JSON.parse(JSON.stringify(route.matched));
             if (breadcrumb.list[1].name === 'Home') {
                 breadcrumb.list.splice(1, 1);
             }
@@ -65,7 +65,7 @@ export default {
         watch(
             () => route.matched,
             (value) => {
-                breadcrumb.list = value;
+                breadcrumb.list = JSON.parse(JSON.stringify(value));
                 if (breadcrumb.list[1] && breadcrumb.list[1].name === 'Home') {
                     breadcrumb.list.splice(1, 1);
                 }
