@@ -167,6 +167,30 @@ const asyncRoutes = [
             ),
     },
     {
+        path: 'hotelIntro',
+        name: 'HotelIntro',
+        meta: {
+            title: '酒店简介',
+            role: [0, 1],
+        },
+        component: () =>
+            import(
+                /* webpackChunkName: "intro" */ '../views/hall/intro/HotelIntro'
+            ),
+    },
+    {
+        path: 'roomIntro',
+        name: 'RoomIntro',
+        meta: {
+            title: '房间描述',
+            role: [0, 1],
+        },
+        component: () =>
+            import(
+                /* webpackChunkName: "intro" */ '../views/hall/intro/RoomIntro'
+            ),
+    },
+    {
         path: 'adminList',
         name: 'AdminList',
         meta: {
