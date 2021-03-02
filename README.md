@@ -2,7 +2,8 @@
 vue3 + element-plus构建项目，且全面使用组合式API。
 
 该仓库为酒店预订系统的后台，其前台微信小程序和Node.js服务端如下：
-> [微信小程序前台](https://github.com/xkcease/hotel-weapp)
+> [微信小程序前台](https://github.com/xkcease/hotel-weapp)  
+
 > [Node.js服务端](https://github.com/xkcease/hotel-server)
 
 ## 技术栈
@@ -32,8 +33,8 @@ npm run build
 该后台系统采用vue动态路由来管理权限，分为三个权限：普通、高级、超级；
 不同权限所能使用的功能如下：
 - 普通管理员：订单管理
-- 高级管理员：订单管理、房间管理
-- 超级管理员：订单管理、房间管理、用户管理
+- 高级管理员：订单管理、房间管理、小程序信息管理
+- 超级管理员：订单管理、房间管理、小程序信息管理、用户管理
 
 ## 功能
 1.  登录
@@ -58,6 +59,7 @@ npm run build
 20. 主页
 21.	酒店简介修改
 22. 房间描述修改
+23. to be continued
 
 ## 目录
 ```shell
