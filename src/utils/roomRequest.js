@@ -16,6 +16,10 @@ function getRoomInfoRequest(number) {
     return axiosGet('/getRoomInfo', { number });
 }
 
+function getRoomOptionsRequest(type) {
+    return axiosGet('/getRoomOptions', { type });
+}
+
 function updateRoomRequest(form) {
     return axiosPost('/updateRoom', form);
 }
@@ -29,6 +33,7 @@ export {
     uploadImgRequest,
     getRoomsRequest,
     getRoomInfoRequest,
+    getRoomOptionsRequest,
     updateRoomRequest,
     deleteRoomRequest,
 };

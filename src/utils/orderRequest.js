@@ -16,8 +16,8 @@ function updateOrderRequest(form) {
     return axiosPost('/updateOrder', form);
 }
 
-function checkInRequest(obj, guests) {
-    return axiosPost('/checkIn', { obj, guests });
+function checkInRequest(obj, contact, guests) {
+    return axiosPost('/checkIn', { obj, contact, guests });
 }
 
 function checkOutRequest(oid, rid) {
