@@ -4,13 +4,27 @@
             <div>
                 <p>
                     房号
-                    <span class="m-l-8">{{ roomInfo.number }}</span>
+                    <el-cascader
+                        v-if="uid"
+                        :options="roomOptions.options"
+                        v-model="roomOptions.value"
+                        :props="roomOptions.props"
+                        :show-all-levels="false"
+                        class="m-l-8"
+                    ></el-cascader>
+                    <span v-else class="m-l-8">{{ roomInfo.number }}</span>
                 </p>
             </div>
             <div>
                 <p>
                     类型
                     <span class="m-l-8">{{ roomInfo.typeText }}</span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    订单
+                    <span class="m-l-8">{{ oid }}</span>
                 </p>
             </div>
             <div>
@@ -54,10 +68,18 @@
             label-position="right"
             label-width="80px"
         >
-            <div v-for="(item, index) in form" :key="index">
+            <el-form-item
+                prop="contact"
+                :rules="rules.contact"
+                label="联系方式"
+                class="check-in__item"
+            >
+                <el-input v-model="form.contact"></el-input>
+            </el-form-item>
+            <div v-for="(item, index) in form.guests" :key="index">
                 <div class="check-in__block">
                     <el-form-item
-                        :prop="index + '.name'"
+                        :prop="'guests.' + index + '.name'"
                         :rules="rules.name"
                         label="姓名"
                         class="check-in__item"
@@ -65,7 +87,7 @@
                         <el-input v-model="item.name"></el-input>
                     </el-form-item>
                     <el-form-item
-                        :prop="index + '.gid'"
+                        :prop="'guests.' + index + '.gid'"
                         :rules="rules.gid"
                         label="身份证"
                         class="check-in__item"
@@ -80,7 +102,9 @@
                         删除
                     </el-button>
                 </div>
-                <el-divider v-if="index !== form.length - 1"></el-divider>
+                <el-divider
+                    v-if="index !== form.guests.length - 1"
+                ></el-divider>
             </div>
             <el-form-item>
                 <el-button
@@ -102,8 +126,8 @@
 import { reactive, ref, toRefs } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import { getRoomInfoRequest } from '@/utils/roomRequest';
-import { checkInRequest, getOrderInfoByUidRequest } from '@/utils/orderRequest';
+import { getRoomInfoRequest, getRoomOptionsRequest } from '@/utils/roomRequest';
+import { checkInRequest, getOrderInfoByOidRequest } from '@/utils/orderRequest';
 import { getDate, getNextDate } from '@/utils/dateTool';
 
 export default {
@@ -112,7 +136,7 @@ export default {
         const router = useRouter();
         const route = useRoute();
 
-        let uid = route.query.uid;
+        let uid = route.params.uid;
 
         const roomInfo = reactive({
             number: '',
@@ -123,44 +147,64 @@ export default {
             extra: '',
         });
 
-        // 获取房间信息
-        getRoomInfoRequest(route.query.number)
-            .then((res) => {
-                if (res.state) {
-                    if (res.room.state && !uid) {
-                        ElMessage.error('该房间已被预订');
-                        router.push({
-                            name: 'RoomList',
-                            params: { changed: true },
-                        });
-                    }
-                    const typeText = ['大床间', '单人间', '双人间'];
+        const typeText = ['大床间', '单人间', '双人间'];
 
-                    roomInfo.number = res.room.number;
-                    roomInfo.type = res.room.type;
-                    roomInfo.typeText = typeText[res.room.type];
-                    roomInfo.shower = res.room.shower;
-                    roomInfo.tv = res.room.tv;
-                    roomInfo.extra = res.room.extra;
-                } else {
-                    ElMessage.warning(res.msg);
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        // 获取房间信息
+        if (!uid) {
+            getRoomInfoRequest(route.query.number)
+                .then((res) => {
+                    if (res.state) {
+                        if (res.room.state && !uid) {
+                            ElMessage.error('该房间已被预订');
+                            router.push({
+                                name: 'RoomList',
+                                params: { changed: true },
+                            });
+                        }
+
+                        roomInfo.number = res.room.number;
+                        roomInfo.type = res.room.type;
+                        roomInfo.typeText = typeText[res.room.type];
+                        roomInfo.shower = res.room.shower;
+                        roomInfo.tv = res.room.tv;
+                        roomInfo.extra = res.room.extra;
+                    } else {
+                        ElMessage.warning(res.msg);
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
 
         const picker = reactive({
             dateArray: [],
             isDisable: false,
         });
 
+        const roomOptions = reactive({
+            options: [],
+            value: [],
+            props: {
+                expandTrigger: 'hover',
+            },
+        });
+
+        const oid = ref('');
+
         if (uid) {
             picker.isDisable = true;
-            getOrderInfoByUidRequest(uid)
+            getOrderInfoByOidRequest(route.query.oid)
                 .then((res) => {
                     if (res.state) {
                         let order = res.order;
+
+                        roomInfo.type = order.type;
+                        roomInfo.typeText = typeText[order.type];
+
+                        oid.value = order.oid;
+                        form.contact = order.contact;
+
                         let nextDate = getNextDate(
                             order.reservation_time,
                             order.reservation_during
@@ -168,6 +212,14 @@ export default {
 
                         picker.dateArray.push(getDate(order.reservation_time));
                         picker.dateArray.push(nextDate);
+
+                        getRoomOptionsRequest(order.type).then((result) => {
+                            if (result.state) {
+                                roomOptions.options = result.options;
+                            } else {
+                                ElMessage.warning(result.msg);
+                            }
+                        });
                     } else {
                         ElMessage.warning(res.msg);
                     }
@@ -188,14 +240,29 @@ export default {
         };
 
         const formElem = ref(null);
-        const form = reactive([
-            {
-                name: '',
-                gid: '',
-            },
-        ]);
+        const form = reactive({
+            contact: '',
+            guests: [
+                {
+                    name: '',
+                    gid: '',
+                },
+            ],
+        });
 
         const rules = reactive({
+            contact: [
+                {
+                    required: true,
+                    message: '联系方式不能为空',
+                    trigger: 'blur',
+                },
+                {
+                    pattern: /^((13[0-9])|(14[5,7])|(15[0-3,5-9])|(17[0,3,5-8])|(18[0-9])|166|198|199|(147))\d{8}$/,
+                    message: '联系方式格式不对',
+                    trigger: 'blur',
+                },
+            ],
             gid: [
                 {
                     required: true,
@@ -214,45 +281,54 @@ export default {
         });
 
         const increaseItem = () => {
-            form.push({
+            form.guests.push({
                 name: '',
                 gid: '',
             });
         };
 
         const deleteItem = (index) => {
-            form.splice(index, 1);
+            form.guests.splice(index, 1);
         };
 
         const submit = () => {
             formElem.value.validate((valid) => {
                 if (valid) {
-                    let obj = {};
+                    if (roomOptions.value.length) {
+                        let obj = {};
 
-                    if (uid) {
-                        obj.uid = uid;
+                        if (uid) {
+                            obj.uid = uid;
+                            obj.oid = oid.value;
+                            obj.number =
+                                roomOptions.value[roomOptions.value.length - 1];
+                        } else {
+                            obj.type = roomInfo.type;
+                            obj.number = roomInfo.number;
+                            obj.place_time = Date.now();
+                            obj.reservation_time = picker.dateArray[0].getTime();
+                            obj.reservation_during =
+                                (picker.dateArray[1] - picker.dateArray[0]) /
+                                86400000;
+                        }
+
+                        obj.check_in_time = Date.now();
+
+                        checkInRequest(obj, form.contact, form.guests)
+                            .then((res) => {
+                                if (res.state) {
+                                    ElMessage.success(res.msg);
+                                    router.back();
+                                } else {
+                                    ElMessage.warning(res.msg);
+                                }
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            });
                     } else {
-                        obj.number = roomInfo.number;
-                        obj.place_time = Date.now();
-                        obj.reservation_time = picker.dateArray[0].getTime();
-                        obj.reservation_during =
-                            (picker.dateArray[1] - picker.dateArray[0]) /
-                            86400000;
+                        ElMessage.warning('房号不能为空');
                     }
-                    obj.check_in_time = Date.now();
-
-                    checkInRequest(obj, form)
-                        .then((res) => {
-                            if (res.state) {
-                                ElMessage.success(res.msg);
-                                router.back();
-                            } else {
-                                ElMessage.warning(res.msg);
-                            }
-                        })
-                        .catch((err) => {
-                            console.log(err);
-                        });
                 }
             });
         };
@@ -262,6 +338,7 @@ export default {
             formElem,
             rules,
             roomInfo,
+            roomOptions,
             ...toRefs(picker),
             nights,
             computeNights,
@@ -269,6 +346,8 @@ export default {
             deleteItem,
             submit,
             disabledDate,
+            uid,
+            oid,
         };
     },
 };

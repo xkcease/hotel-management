@@ -6,14 +6,12 @@
                 prop="oid"
                 sortable
             ></el-table-column>
+            <el-table-column label="联系方式" prop="contact"></el-table-column>
             <el-table-column
-                label="房号"
-                prop="number"
+                label="房间类型"
+                prop="typeText"
                 sortable
-            ></el-table-column>
-            <el-table-column
-                label="下单时间"
-                prop="placeTime"
+                :sort-method="sortType"
             ></el-table-column>
             <el-table-column
                 label="预订时间"
@@ -90,7 +88,11 @@ export default {
             list: [],
         });
 
-        const defaultSort = { prop: 'reservationDate', order: 'ascending' };
+        const defaultSort = { prop: 'reservationDate', order: 'descending' };
+
+        const sortType = (a, b) => {
+            return a.type - b.type;
+        };
 
         const sortReserved = (a, b) => {
             return a.reservation_time - b.reservation_time;
@@ -102,6 +104,9 @@ export default {
         getOrdersRequest(0)
             .then((res) => {
                 for (let order of res) {
+                    let typeTextArray = ['大床间', '单人间', '双人间'];
+                    order.typeText = typeTextArray[order.type];
+
                     let date = getFormatDate(order.reservation_time);
                     let nextDate = getFormatNextDate(
                         order.reservation_time,
@@ -124,7 +129,7 @@ export default {
         const toModifyOrder = (order) => {
             router.push({
                 name: 'ModifyOrder',
-                query: { oid: order.oid, number: order.number },
+                query: { oid: order.oid },
                 params: { state: 0 },
             });
         };
@@ -132,7 +137,8 @@ export default {
         const toCheckIn = (order) => {
             router.push({
                 name: 'CheckIn',
-                query: { number: order.number, uid: order.uid },
+                query: { oid: order.oid },
+                params: { uid: order.uid },
             });
         };
 
@@ -147,8 +153,6 @@ export default {
                         tableData.list.splice(index, 1);
                         tableData.origin = tableData.list;
                         ElMessage.success(res.msg);
-                        console.log(order);
-                        console.log(tableData.list);
 
                         reload();
                     } else {
@@ -169,7 +173,6 @@ export default {
         let keyword = ref('');
         const search = () => {
             const oidReg = /^\d+$/;
-            const numberReg = /^[0-9a-zA-Z]+$/;
             const keywordReg = new RegExp(keyword.value);
 
             let searchArray = [];
@@ -185,23 +188,13 @@ export default {
                 }
             }
 
-            // 检索房号
-            if (numberReg.test(keyword.value)) {
-                for (let order of tableData.origin) {
-                    if (keywordReg.test(order.number)) {
-                        if (searchArray.indexOf(order) === -1) {
-                            searchArray.push(order);
-                        }
-                    }
-                }
-            }
-
             tableData.list = searchArray;
         };
 
         return {
             ...toRefs(tableData),
             defaultSort,
+            sortType,
             sortReserved,
             toModifyOrder,
             toCheckIn,

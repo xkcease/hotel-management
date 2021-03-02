@@ -11,6 +11,7 @@
                 prop="number"
                 sortable
             ></el-table-column>
+            <el-table-column label="联系方式" prop="contact"></el-table-column>
             <el-table-column
                 label="预订时间"
                 prop="reservationDate"
@@ -75,7 +76,7 @@ export default {
 
         loading.start();
 
-        // 获取用户
+        // 获取订单
         getOrdersRequest(1)
             .then((res) => {
                 for (let order of res) {

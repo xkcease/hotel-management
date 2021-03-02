@@ -1,10 +1,21 @@
 <template>
     <div class="modify-order">
-        <div>
+        <div v-if="state === 1">
             <div class="modify-order__label">房号</div>
             <span class="m-l-12">{{ roomInfo.number }}</span>
         </div>
-        <div>
+        <div v-if="state === 0">
+            <div class="modify-order__label">类型</div>
+            <el-select v-model="type" class="modify-order__input m-l-12">
+                <el-option
+                    v-for="item in typeOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                ></el-option>
+            </el-select>
+        </div>
+        <div v-else>
             <div class="modify-order__label">类型</div>
             <span class="m-l-12" style="margin-right: 20px">{{
                 roomInfo.typeText
@@ -29,17 +40,25 @@
         </div>
         <div>
             <div class="modify-order__label">订单号</div>
-            <span class="m-l-12">{{ orderInfo.oid }}</span>
+            <span class="m-l-12">{{ order.oid }}</span>
+        </div>
+        <div v-if="state === 0">
+            <div class="modify-order__label">下单时间</div>
+            <span class="m-l-12">{{ order.placeTime }}</span>
+        </div>
+        <div v-else>
+            <div class="modify-order__label">入住时间</div>
+            <span class="m-l-12">{{ order.checkInTime }}</span>
         </div>
         <div>
-            <div class="modify-order__label">入住时间</div>
-            <span class="m-l-12">{{ orderInfo.checkInTime }}</span>
+            <div class="modify-order__label">联系方式</div>
+            <span class="m-l-12">{{ order.contact }}</span>
         </div>
         <div>
             <p class="modify-order__extra">{{ roomInfo.extra }}</p>
         </div>
         <el-date-picker
-            v-if="state === '0'"
+            v-if="state === 0"
             class="modify-order__picker"
             v-model="dateArray"
             type="daterange"
@@ -50,7 +69,7 @@
             @change="computeNights"
         >
         </el-date-picker>
-        <div style="display: inline" v-if="state === '1'">
+        <div style="display: inline" v-if="state === 1">
             <el-date-picker
                 v-model="pi.date"
                 type="date"
@@ -93,7 +112,24 @@ export default {
         const router = useRouter();
         const route = useRoute();
 
-        const state = route.params.state;
+        const state = parseInt(route.params.state);
+
+        const typeOptions = [
+            {
+                label: '大床间',
+                value: 0,
+            },
+            {
+                label: '单人间',
+                value: 1,
+            },
+            {
+                label: '双人间',
+                value: 2,
+            },
+        ];
+
+        const type = ref(0);
 
         const roomInfo = reactive({
             number: '',
@@ -105,24 +141,26 @@ export default {
         });
 
         // 获取房间信息
-        getRoomInfoRequest(route.query.number)
-            .then((res) => {
-                if (res.state) {
-                    const typeText = ['大床间', '单人间', '双人间'];
+        if (state === 1) {
+            getRoomInfoRequest(route.query.number)
+                .then((res) => {
+                    if (res.state) {
+                        const typeText = ['大床间', '单人间', '双人间'];
 
-                    roomInfo.number = res.room.number;
-                    roomInfo.type = res.room.type;
-                    roomInfo.typeText = typeText[res.room.type];
-                    roomInfo.shower = res.room.shower;
-                    roomInfo.tv = res.room.tv;
-                    roomInfo.extra = res.room.extra;
-                } else {
-                    ElMessage.warning(res.msg);
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+                        roomInfo.number = res.room.number;
+                        roomInfo.type = res.room.type;
+                        roomInfo.typeText = typeText[res.room.type];
+                        roomInfo.shower = res.room.shower;
+                        roomInfo.tv = res.room.tv;
+                        roomInfo.extra = res.room.extra;
+                    } else {
+                        ElMessage.warning(res.msg);
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
 
         const picker = reactive({
             dateArray: [],
@@ -145,25 +183,29 @@ export default {
         });
 
         const orderInfo = reactive({
-            oid: null,
-            reservationTime: '',
-            during: 0,
-            checkInTime: '',
+            order: {},
         });
 
         getOrderInfoByOidRequest(route.query.oid)
             .then((res) => {
                 if (res.state) {
-                    orderInfo.oid = res.order.oid;
-                    orderInfo.reservationTime = res.order.reservation_time;
-                    orderInfo.during = res.order.reservation_during;
                     nights.value = res.order.reservation_during + '晚';
-                    orderInfo.checkInTime = getFormatDateTime(
+
+                    res.order.checkInTime = getFormatDateTime(
                         res.order.check_in_time
                     );
+                    res.order.placeTime = getFormatDateTime(
+                        res.order.place_time
+                    );
 
-                    if (state === '0') {
+                    orderInfo.order = res.order;
+
+                    if (state === 0) {
                         let order = res.order;
+
+                        roomInfo.typeText = typeOptions[order.type].label;
+                        type.value = typeOptions[order.type].label;
+
                         let nextDate = getNextDate(
                             order.reservation_time,
                             order.reservation_during
@@ -171,7 +213,7 @@ export default {
 
                         picker.dateArray.push(getDate(order.reservation_time));
                         picker.dateArray.push(nextDate);
-                    } else if (state === '1') {
+                    } else if (state === 1) {
                         let nextDate = getNextDate(
                             res.order.reservation_time,
                             res.order.reservation_during
@@ -189,27 +231,29 @@ export default {
             });
 
         const piDisabledDate = (time) => {
-            return time.getTime() < orderInfo.reservationTime + 8.64e7;
+            return time.getTime() < orderInfo.order.reservation_time + 8.64e7;
         };
 
         const piComputeNights = (date) => {
+            console.log(orderInfo.order);
             let during =
-                (date.getTime() - orderInfo.reservationTime) / 86400000;
+                (date.getTime() - orderInfo.order.reservation_time) / 86400000;
             nights.value = during + '晚';
         };
 
         const submit = () => {
             let obj = {};
 
-            obj.oid = orderInfo.oid;
-            if (state === '0') {
+            obj.oid = orderInfo.order.oid;
+            if (state === 0) {
+                obj.type = type.value;
                 obj.reservation_time = picker.dateArray[0].getTime();
                 obj.reservation_during =
                     (picker.dateArray[1] - picker.dateArray[0]) / 86400000;
-            } else if (state === '1') {
-                obj.reservation_time = orderInfo.reservationTime;
+            } else if (state === 1) {
+                obj.reservation_time = orderInfo.order.reservation_time;
                 obj.reservation_during =
-                    (pi.nextDate.getTime() - orderInfo.reservationTime) /
+                    (pi.nextDate.getTime() - orderInfo.order.reservation_time) /
                     86400000;
             }
 
@@ -228,8 +272,10 @@ export default {
         };
 
         return {
+            type,
+            typeOptions,
             roomInfo,
-            orderInfo,
+            ...toRefs(orderInfo),
             ...toRefs(picker),
             nights,
             computeNights,
@@ -251,6 +297,10 @@ export default {
     font-size: 14px;
     color: #606266;
     line-height: 50px;
+
+    .modify-order__input {
+        width: 30%;
+    }
 
     .modify-order__extra {
         width: 70%;
