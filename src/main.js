@@ -40,6 +40,7 @@ import {
     ElDivider,
     ElDatePicker,
     ElCalendar,
+    ElCascader,
 } from 'element-plus';
 import lang from 'element-plus/lib/locale/lang/zh-cn';
 import 'dayjs/locale/zh-cn';
@@ -85,7 +86,8 @@ app.use(ElButton)
     .use(ElCheckbox)
     .use(ElDivider)
     .use(ElDatePicker)
-    .use(ElCalendar);
+    .use(ElCalendar)
+    .use(ElCascader);
 
 app.use(store)
     .use(router)
