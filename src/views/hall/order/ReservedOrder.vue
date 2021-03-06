@@ -67,8 +67,10 @@
 <script>
 import { reactive, toRefs, ref, inject } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 import { ElMessage } from 'element-plus';
 import loading from '@/utils/loading';
+import socketIOTool from '@/utils/socketIOTool';
 import { getOrdersRequest, deleteOrderRequest } from '@/utils/orderRequest';
 import {
     getFormatDate,
@@ -80,6 +82,9 @@ export default {
     name: 'ReservedOrder',
     setup() {
         const router = useRouter();
+        const store = useStore();
+
+        store.commit('clearNoticeOrderCount');
 
         const reload = inject('reload');
 
@@ -98,13 +103,32 @@ export default {
             return a.reservation_time - b.reservation_time;
         };
 
+        const typeTextArray = ['大床间', '单人间', '双人间'];
+
+        socketIOTool.on('new-order', (socket) => {
+            socket.orderArray.forEach((order) => {
+                order.typeText = typeTextArray[order.type];
+                let date = getFormatDate(order.reservation_time);
+                let nextDate = getFormatNextDate(
+                    order.reservation_time,
+                    order.reservation_during
+                );
+
+                order.placeTime = getFormatDateTime(order.place_time);
+                order.reservationDate = date + ' 至 ' + nextDate;
+            });
+
+            let newList = tableData.origin.concat(socket.orderArray);
+            tableData.origin = newList;
+            tableData.list = newList;
+        });
+
         loading.start();
 
         // 获取用户
         getOrdersRequest(0)
             .then((res) => {
                 for (let order of res) {
-                    let typeTextArray = ['大床间', '单人间', '双人间'];
                     order.typeText = typeTextArray[order.type];
 
                     let date = getFormatDate(order.reservation_time);
@@ -144,7 +168,7 @@ export default {
 
         const deleteOder = (order) => {
             loading.start();
-            deleteOrderRequest(order.oid, order.rid)
+            deleteOrderRequest(order.oid)
                 .then((res) => {
                     if (res.state) {
                         let index = tableData.list.findIndex((value) => {
