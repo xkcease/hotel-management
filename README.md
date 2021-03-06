@@ -59,7 +59,9 @@ npm run build
 20. 主页
 21.	酒店简介修改
 22. 房间描述修改
-23. to be continued
+23. 实时接收订单
+24. to be continued
+
 
 ## 目录
 ```shell
@@ -119,6 +121,7 @@ hotel-management
 │  │      orderRequest.js
 │  │      priceRequest.js
 │  │      roomRequest.js
+│  │      socketIOTool.js
 │  │      
 │  └─views
 │      │  404.vue
