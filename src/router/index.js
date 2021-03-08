@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import store from '../store';
+import loading from '@/utils/loading';
 
 const routes = [
     {
@@ -231,6 +232,8 @@ function verifyPermission(route, permission) {
 }
 
 router.beforeEach(async (to, from, next) => {
+    loading.close();
+
     const token = sessionStorage.getItem('token');
 
     if (to.name !== 'Login') {
