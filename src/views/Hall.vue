@@ -14,11 +14,11 @@
                         separator-class="el-icon-arrow-right"
                     >
                         <el-breadcrumb-item
-                            v-for="(item, index) in list"
-                            :key="index"
+                            v-for="item in list"
+                            :key="item.title"
                             :to="item.path"
                         >
-                            {{ item.meta.title }}
+                            {{ item.title }}
                         </el-breadcrumb-item>
                     </el-breadcrumb>
                     <router-view v-if="isRouterAlive" />
@@ -56,8 +56,14 @@ export default {
         });
 
         onMounted(() => {
-            breadcrumb.list = JSON.parse(JSON.stringify(route.matched));
-            if (breadcrumb.list[1].name === 'Home') {
+            route.matched.forEach((v) => {
+                breadcrumb.list.push({
+                    path: v.path,
+                    title: v.meta.title,
+                });
+            });
+
+            if (breadcrumb.list[1] && breadcrumb.list[1].name === 'Home') {
                 breadcrumb.list.splice(1, 1);
             }
         });
@@ -65,7 +71,15 @@ export default {
         watch(
             () => route.matched,
             (value) => {
-                breadcrumb.list = JSON.parse(JSON.stringify(value));
+                breadcrumb.list = [];
+
+                value.forEach((v) => {
+                    breadcrumb.list.push({
+                        path: v.path,
+                        title: v.meta.title,
+                    });
+                });
+
                 if (breadcrumb.list[1] && breadcrumb.list[1].name === 'Home') {
                     breadcrumb.list.splice(1, 1);
                 }
