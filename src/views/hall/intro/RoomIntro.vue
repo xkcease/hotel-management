@@ -59,6 +59,19 @@
                 <el-input v-model="form.options" placeholder="用英文;分隔">
                 </el-input>
             </el-form-item>
+            <el-form-item prop="intro" label="简介">
+                <el-input
+                    type="textarea"
+                    v-model="form.intro"
+                    placeholder="输入其他内容"
+                    maxlength="254"
+                    show-word-limit
+                >
+                    <template #prefix>
+                        <i class="el-icon-lock form__icon"></i>
+                    </template>
+                </el-input>
+            </el-form-item>
             <el-form-item>
                 <el-upload
                     ref="uploadElem"
@@ -114,6 +127,7 @@ export default {
             tv: 0,
             window: 0,
             options: '',
+            intro: '',
         });
 
         const rules = reactive({
@@ -186,6 +200,7 @@ export default {
                     form.tv = res.roomIntro.tv;
                     form.window = res.roomIntro.window;
                     form.options = res.roomIntro.options;
+                    form.intro = res.roomIntro.intro;
                     upload.img = res.roomIntro.img;
 
                     let nameArray = ['king', 'single', 'double'];
@@ -216,6 +231,7 @@ export default {
                         form.tv = res.roomIntro.tv;
                         form.window = res.roomIntro.window;
                         form.options = res.roomIntro.options;
+                        form.intro = res.roomIntro.intro;
                         upload.img = res.roomIntro.img;
 
                         let nameArray = [

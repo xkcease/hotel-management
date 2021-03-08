@@ -8,6 +8,9 @@
             label-width="80px"
         >
             <p class="form__msg">{{ errorMsg }}</p>
+            <el-form-item prop="name" label="名称">
+                <el-input v-model="form.name"> </el-input>
+            </el-form-item>
             <el-form-item prop="address" label="地址">
                 <el-input v-model="form.address"> </el-input>
             </el-form-item>
@@ -80,6 +83,7 @@ export default {
     setup() {
         const formElem = ref(null);
         const form = reactive({
+            name: '',
             address: '',
             contact: '',
             options: '',
@@ -94,6 +98,9 @@ export default {
         });
 
         const rules = reactive({
+            name: [
+                { required: true, message: '名称不能为空', trigger: 'blur' },
+            ],
             address: [
                 { required: true, message: '地址不能为空', trigger: 'blur' },
             ],
@@ -132,6 +139,7 @@ export default {
         getHotelIntroRequest()
             .then((res) => {
                 if (res.state) {
+                    form.name = res.hotelIntro.name;
                     form.address = res.hotelIntro.address;
                     form.contact = res.hotelIntro.contact;
                     form.options = res.hotelIntro.options;

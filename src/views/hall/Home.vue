@@ -13,7 +13,7 @@ export default {
         const date = reactive({
             value: new Date(),
         });
-        console.log(123213);
+
         return {
             date,
         };
