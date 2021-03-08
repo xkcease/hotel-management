@@ -6,6 +6,7 @@
             text-color="#bfcbd9"
             default-active="1"
             :router="true"
+            :unique-opened="true"
         >
             <el-menu-item index="home">
                 <h2 class="sidebar__item">
