@@ -1,71 +1,80 @@
 <template>
     <div class="reserved-order">
-        <el-table :data="list" :default-sort="defaultSort" stripe>
-            <el-table-column
-                label="订单号"
-                prop="oid"
-                sortable
-            ></el-table-column>
-            <el-table-column label="联系方式" prop="contact"></el-table-column>
-            <el-table-column
-                label="房间类型"
-                prop="typeText"
-                sortable
-                :sort-method="sortType"
-            ></el-table-column>
-            <el-table-column
-                label="预订时间"
-                prop="reservationDate"
-                sortable
-                :sort-method="sortReserved"
-            ></el-table-column>
-            <el-table-column align="right">
-                <template #header>
-                    <el-input
-                        size="small"
-                        placeholder="输入关键字搜索"
-                        v-model="keyword"
-                        @input="search"
-                    />
-                </template>
-                <template #default="scope">
-                    <div class="l-flex l-flex__justify--between">
-                        <el-button
-                            size="mini"
-                            type="primary"
-                            @click="toCheckIn(scope.row)"
-                        >
-                            办理入住
-                        </el-button>
-                        <el-button
-                            size="mini"
-                            @click="toModifyOrder(scope.row)"
-                        >
-                            修改订单
-                        </el-button>
-                        <el-popconfirm
-                            icon="el-icon-info"
-                            iconColor="red"
-                            confirmButtonText="是"
-                            cancelButtonText="否"
-                            title="确定要删除吗？"
-                            @confirm="deleteOder(scope.row)"
-                        >
-                            <template #reference>
-                                <el-button size="mini" type="danger">
-                                    删除
-                                </el-button>
-                            </template>
-                        </el-popconfirm>
-                    </div>
-                </template>
-            </el-table-column>
-        </el-table>
+        <SearchFilter
+            v-model="conditions"
+            :searchOptions="searchOptions"
+            type
+            date
+            search
+        />
+        <div class="reserved-order__table">
+            <el-table :data="list" :default-sort="defaultSort" stripe border>
+                <el-table-column
+                    label="订单号"
+                    prop="oid"
+                    align="center"
+                    sortable
+                ></el-table-column>
+                <el-table-column
+                    label="联系方式"
+                    prop="contact"
+                    align="center"
+                ></el-table-column>
+                <el-table-column
+                    label="房间类型"
+                    prop="typeText"
+                    width="200"
+                    align="center"
+                    sortable
+                    :sort-method="sortType"
+                ></el-table-column>
+                <el-table-column
+                    label="预订时间"
+                    prop="reservationDate"
+                    align="center"
+                    sortable
+                    :sort-method="sortReserved"
+                ></el-table-column>
+                <el-table-column align="center" label="操作" width="300">
+                    <template #default="scope">
+                        <div class="l-flex l-flex__justify--around">
+                            <el-button
+                                size="mini"
+                                type="primary"
+                                @click="toCheckIn(scope.row)"
+                            >
+                                办理入住
+                            </el-button>
+                            <el-button
+                                size="mini"
+                                @click="toModifyOrder(scope.row)"
+                            >
+                                修改订单
+                            </el-button>
+                            <el-popconfirm
+                                icon="el-icon-info"
+                                iconColor="red"
+                                confirmButtonText="是"
+                                cancelButtonText="否"
+                                title="确定要删除吗？"
+                                @confirm="deleteOder(scope.row)"
+                            >
+                                <template #reference>
+                                    <el-button size="mini" type="danger">
+                                        删除
+                                    </el-button>
+                                </template>
+                            </el-popconfirm>
+                        </div>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </div>
     </div>
 </template>
 
 <script>
-import { reactive, toRefs, ref, inject } from 'vue';
+import { reactive, toRefs, inject, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { ElMessage } from 'element-plus';
@@ -77,9 +86,13 @@ import {
     getFormatNextDate,
     getFormatDateTime,
 } from '@/utils/dateTool';
+import SearchFilter from '@/components/SearchFilter';
 
 export default {
     name: 'ReservedOrder',
+    components: {
+        SearchFilter,
+    },
     setup() {
         const router = useRouter();
         const store = useStore();
@@ -88,12 +101,65 @@ export default {
 
         const reload = inject('reload');
 
+        const searchOptions = [
+            {
+                label: '订单编号',
+                value: 'oid',
+            },
+            {
+                label: '联系方式',
+                value: 'contact',
+            },
+        ];
+
+        const conditionsData = reactive({
+            conditions: [],
+        });
+
+        // 查询
+        const search = () => {
+            let list = tableData.origin;
+
+            for (let condition of conditionsData.conditions) {
+                if (condition.key === 'type') {
+                    list = list.filter((order) => {
+                        return order.type === condition.value;
+                    });
+                }
+
+                if (condition.key === 'date') {
+                    list = list.filter((order) => {
+                        return (
+                            condition.value[0] <= order.reservation_time &&
+                            order.reservation_time <= condition.value[1]
+                        );
+                    });
+                }
+
+                if (condition.key === 'search') {
+                    const keywordReg = new RegExp(condition.value);
+
+                    list = list.filter((order) => {
+                        return keywordReg.test(order[condition.searchKey]);
+                    });
+                }
+            }
+            tableData.list = list;
+        };
+
+        watch(
+            () => conditionsData.conditions,
+            () => {
+                search();
+            }
+        );
+
         const tableData = reactive({
             origin: [],
             list: [],
         });
 
-        const defaultSort = { prop: 'reservationDate', order: 'descending' };
+        const defaultSort = { prop: 'reservationDate', order: 'ascending' };
 
         const sortType = (a, b) => {
             return a.type - b.type;
@@ -193,29 +259,9 @@ export default {
                 });
         };
 
-        // 搜索
-        let keyword = ref('');
-        const search = () => {
-            const oidReg = /^\d+$/;
-            const keywordReg = new RegExp(keyword.value);
-
-            let searchArray = [];
-            let searchKey = '';
-
-            if (oidReg.test(keyword.value)) {
-                searchKey = 'oid';
-            }
-
-            for (let order of tableData.origin) {
-                if (keywordReg.test(order[searchKey])) {
-                    searchArray.push(order);
-                }
-            }
-
-            tableData.list = searchArray;
-        };
-
         return {
+            searchOptions,
+            ...toRefs(conditionsData),
             ...toRefs(tableData),
             defaultSort,
             sortType,
@@ -223,8 +269,6 @@ export default {
             toModifyOrder,
             toCheckIn,
             deleteOder,
-            keyword,
-            search,
         };
     },
 };
@@ -233,7 +277,11 @@ export default {
 <style lang="scss">
 .reserved-order {
     margin: 30px 10px;
-    border: 1px solid #ebeef5;
     padding: 0 20px;
+
+    .reserved-order__table {
+        border: 1px solid #ebeef5;
+        margin-top: 10px;
+    }
 }
 </style>
