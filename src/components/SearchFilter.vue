@@ -21,6 +21,55 @@
                 </el-select>
             </el-form-item>
             <el-form-item
+                label="房间状态"
+                class="search-filter__item"
+                v-if="state"
+            >
+                <el-select
+                    size="small"
+                    v-model="form.state"
+                    placeholder="请选择"
+                >
+                    <el-option
+                        v-for="item in stateOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    >
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item
+                label="浴室"
+                class="search-filter__item"
+                v-if="shower"
+            >
+                <el-select
+                    size="small"
+                    v-model="form.shower"
+                    placeholder="请选择"
+                >
+                    <el-option
+                        v-for="item in options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    >
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="电视" class="search-filter__item" v-if="tv">
+                <el-select size="small" v-model="form.tv" placeholder="请选择">
+                    <el-option
+                        v-for="item in options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    >
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item
                 label="权限"
                 class="search-filter__item"
                 v-if="permission"
@@ -132,6 +181,18 @@ export default {
             type: Boolean,
             default: false,
         },
+        state: {
+            type: Boolean,
+            default: false,
+        },
+        shower: {
+            type: Boolean,
+            default: false,
+        },
+        tv: {
+            type: Boolean,
+            default: false,
+        },
         permission: {
             type: Boolean,
             default: false,
@@ -159,6 +220,9 @@ export default {
     setup(props, { emit }) {
         const form = reactive({
             type: '',
+            state: '',
+            shower: '',
+            tv: '',
             permission: '',
             date: [],
             checkIn: [],
@@ -166,6 +230,17 @@ export default {
             searchKey: '',
             keyword: '',
         });
+
+        const options = [
+            {
+                value: 0,
+                label: '无',
+            },
+            {
+                value: 1,
+                label: '有',
+            },
+        ];
 
         const typeOptions = [
             {
@@ -179,6 +254,17 @@ export default {
             {
                 value: 2,
                 label: '双人间',
+            },
+        ];
+
+        const stateOptions = [
+            {
+                value: 0,
+                label: '可使用',
+            },
+            {
+                value: 1,
+                label: '已预订',
             },
         ];
 
@@ -203,6 +289,9 @@ export default {
 
         const reset = () => {
             form.type = '';
+            form.state = '';
+            form.shower = '';
+            form.tv = '';
             form.permission = '';
             form.date = [];
             form.checkIn = [];
@@ -217,6 +306,17 @@ export default {
 
             if (props.type && form.type !== '') {
                 conditions.push({ key: 'type', value: form.type });
+            }
+
+            if (props.state && form.state !== '') {
+                conditions.push({ key: 'state', value: form.state });
+            }
+
+            if (props.shower && form.shower !== '') {
+                conditions.push({ key: 'shower', value: form.shower });
+            }
+            if (props.tv && form.tv !== '') {
+                conditions.push({ key: 'tv', value: form.tv });
             }
 
             if (props.permission && form.permission !== '') {
@@ -257,7 +357,9 @@ export default {
 
         return {
             form,
+            options,
             typeOptions,
+            stateOptions,
             permissionOptions,
             disabledDate,
             reset,
