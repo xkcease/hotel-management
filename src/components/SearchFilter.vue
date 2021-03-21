@@ -21,12 +21,61 @@
                 </el-select>
             </el-form-item>
             <el-form-item
+                label="权限"
+                class="search-filter__item"
+                v-if="permission"
+            >
+                <el-select
+                    size="small"
+                    v-model="form.permission"
+                    placeholder="请选择"
+                >
+                    <el-option
+                        v-for="item in permissionOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    >
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item
                 label="预订时间"
                 class="search-filter__item"
                 v-if="date"
             >
                 <el-date-picker
                     v-model="form.date"
+                    type="daterange"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    :disabledDate="disabledDate"
+                    size="small"
+                >
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item
+                label="入住时间"
+                class="search-filter__item"
+                v-if="checkIn"
+            >
+                <el-date-picker
+                    v-model="form.checkIn"
+                    type="daterange"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    :disabledDate="disabledDate"
+                    size="small"
+                >
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item
+                label="退房时间"
+                class="search-filter__item"
+                v-if="checkOut"
+            >
+                <el-date-picker
+                    v-model="form.checkOut"
                     type="daterange"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
@@ -45,6 +94,7 @@
                     v-model="form.keyword"
                     size="small"
                     class="search-filter__input"
+                    @keyup.enter="saveCondition"
                 >
                     <template #prepend>
                         <el-select
@@ -82,7 +132,19 @@ export default {
             type: Boolean,
             default: false,
         },
+        permission: {
+            type: Boolean,
+            default: false,
+        },
         date: {
+            type: Boolean,
+            default: false,
+        },
+        checkIn: {
+            type: Boolean,
+            default: false,
+        },
+        checkOut: {
             type: Boolean,
             default: false,
         },
@@ -97,7 +159,10 @@ export default {
     setup(props, { emit }) {
         const form = reactive({
             type: '',
+            permission: '',
             date: [],
+            checkIn: [],
+            checkOut: [],
             searchKey: '',
             keyword: '',
         });
@@ -117,13 +182,31 @@ export default {
             },
         ];
 
+        const permissionOptions = [
+            {
+                label: '普通管理员',
+                value: 2,
+            },
+            {
+                label: '高级管理员',
+                value: 1,
+            },
+            {
+                label: '超级管理员',
+                value: 0,
+            },
+        ];
+
         const disabledDate = (time) => {
             return time.getTime() < Date.now() - 8.64e7;
         };
 
         const reset = () => {
             form.type = '';
+            form.permission = '';
             form.date = [];
+            form.checkIn = [];
+            form.checkOut = [];
             form.searchKey = '';
             form.keyword = '';
             emit('update:modelValue', []);
@@ -136,11 +219,29 @@ export default {
                 conditions.push({ key: 'type', value: form.type });
             }
 
+            if (props.permission && form.permission !== '') {
+                conditions.push({ key: 'permission', value: form.permission });
+            }
+
             if (props.date && form.date.length) {
                 form.date[0] = form.date[0].getTime();
                 form.date[1] = form.date[1].getTime();
 
                 conditions.push({ key: 'date', value: form.date });
+            }
+
+            if (props.checkIn && form.checkIn.length) {
+                form.checkIn[0] = form.checkIn[0].getTime();
+                form.checkIn[1] = form.checkIn[1].getTime();
+
+                conditions.push({ key: 'checkIn', value: form.checkIn });
+            }
+
+            if (props.checkOut && form.checkOut.length) {
+                form.checkOut[0] = form.checkOut[0].getTime();
+                form.checkOut[1] = form.checkOut[1].getTime();
+
+                conditions.push({ key: 'checkOut', value: form.checkOut });
             }
 
             if (props.search && form.searchKey && form.keyword) {
@@ -157,6 +258,7 @@ export default {
         return {
             form,
             typeOptions,
+            permissionOptions,
             disabledDate,
             reset,
             saveCondition,
@@ -175,8 +277,8 @@ export default {
     }
 
     .search-filter__item {
-        margin-right: 20px;
-        margin-bottom: 0;
+        margin-right: 18px;
+        margin-bottom: 15px;
     }
 
     .search-filter__input {
@@ -184,7 +286,7 @@ export default {
     }
 
     .search-filter__select {
-        width: 100px;
+        width: 110px;
     }
 }
 
