@@ -96,6 +96,7 @@ hotel-management
 │  │          
 │  ├─components
 │  │      Navbar.vue
+│  │      SearchFilter.vue
 │  │      Sidebar.vue
 │  │      SvgIcon.vue
 │  │      
