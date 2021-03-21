@@ -11,14 +11,10 @@
             <el-table :data="list" :default-sort="defaultSort" stripe border>
                 <el-table-column
                     label="订单号"
+                    width="200"
                     prop="oid"
                     align="center"
                     sortable
-                ></el-table-column>
-                <el-table-column
-                    label="联系方式"
-                    prop="contact"
-                    align="center"
                 ></el-table-column>
                 <el-table-column
                     label="房间类型"
@@ -30,10 +26,16 @@
                 ></el-table-column>
                 <el-table-column
                     label="预订时间"
+                    width="210"
                     prop="reservationDate"
                     align="center"
                     sortable
                     :sort-method="sortReserved"
+                ></el-table-column>
+                <el-table-column
+                    label="联系方式"
+                    prop="contact"
+                    align="center"
                 ></el-table-column>
                 <el-table-column align="center" label="操作" width="300">
                     <template #default="scope">
