@@ -1,93 +1,101 @@
 <template>
     <div class="modify-room">
-        <el-form
-            :model="form"
-            :rules="rules"
-            ref="formElem"
-            label-position="right"
-            label-width="80px"
-        >
-            <p class="form__msg">{{ errorMsg }}</p>
-            <el-form-item prop="number" label="房号">
-                <el-input
-                    v-model="form.number"
-                    placeholder="长度3-8的数字/字母"
-                    class="modify-room__input"
-                >
-                </el-input>
-            </el-form-item>
-            <el-form-item label="类型">
-                <el-select v-model="form.type" class="modify-room__input">
-                    <el-option
-                        v-for="item in typeOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                    ></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="浴室">
-                <el-select v-model="form.shower" class="modify-room__input">
-                    <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                    ></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="电视">
-                <el-select v-model="form.tv" class="modify-room__input">
-                    <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                    ></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item prop="extra" label="额外内容">
-                <el-input
-                    type="textarea"
-                    v-model="form.extra"
-                    placeholder="输入其他内容"
-                    maxlength="254"
-                    show-word-limit
-                >
-                    <template #prefix>
-                        <i class="el-icon-lock form__icon"></i>
-                    </template>
-                </el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-upload
-                    ref="uploadElem"
-                    class="l-flex"
-                    action="http://localhost:9092/uploadImg"
-                    :http-request="uploadImg"
-                    list-type="picture-card"
-                    :file-list="upload.list"
-                    :auto-upload="false"
-                    :limit="1"
-                    :on-preview="imgPreview"
-                    :on-change="verifyFileType"
-                    :on-success="onSuccessHandle"
-                >
-                    <i class="el-icon-plus"></i>
-                </el-upload>
-                <el-dialog v-model="dialogVisible">
-                    <div style="text-align: center">
-                        <img :src="upload.img" alt="" />
-                    </div>
-                </el-dialog>
-                <p class="modify-room__tip">只能上传一张图片</p>
-            </el-form-item>
-            <el-form-item>
-                <el-button class="form__btn" type="primary" @click="ModifyRoom"
-                    >更改房间</el-button
-                >
-            </el-form-item>
-        </el-form>
+        <div class="form__title">
+            <h2>修改房间</h2>
+        </div>
+        <div class="modify-room__form">
+            <el-form
+                :model="form"
+                :rules="rules"
+                ref="formElem"
+                label-position="right"
+                label-width="80px"
+            >
+                <p class="form__msg">{{ errorMsg }}</p>
+                <el-form-item prop="number" label="房号">
+                    <el-input
+                        v-model="form.number"
+                        placeholder="长度3-8的数字/字母"
+                        class="modify-room__input"
+                    >
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="类型">
+                    <el-select v-model="form.type" class="modify-room__input">
+                        <el-option
+                            v-for="item in typeOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="浴室">
+                    <el-select v-model="form.shower" class="modify-room__input">
+                        <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="电视">
+                    <el-select v-model="form.tv" class="modify-room__input">
+                        <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item prop="extra" label="额外内容">
+                    <el-input
+                        type="textarea"
+                        v-model="form.extra"
+                        placeholder="输入其他内容"
+                        maxlength="254"
+                        show-word-limit
+                    >
+                        <template #prefix>
+                            <i class="el-icon-lock form__icon"></i>
+                        </template>
+                    </el-input>
+                </el-form-item>
+                <!-- <el-form-item>
+                    <el-upload
+                        ref="uploadElem"
+                        class="l-flex"
+                        action="http://localhost:9092/uploadImg"
+                        :http-request="uploadImg"
+                        list-type="picture-card"
+                        :file-list="upload.list"
+                        :auto-upload="false"
+                        :limit="1"
+                        :on-preview="imgPreview"
+                        :on-change="verifyFileType"
+                        :on-success="onSuccessHandle"
+                    >
+                        <i class="el-icon-plus"></i>
+                    </el-upload>
+                    <el-dialog v-model="dialogVisible">
+                        <div style="text-align: center">
+                            <img :src="upload.img" alt="" />
+                        </div>
+                    </el-dialog>
+                    <p class="modify-room__tip">只能上传一张图片</p>
+                </el-form-item> -->
+                <el-form-item>
+                    <el-button
+                        class="form__btn"
+                        type="primary"
+                        @click="ModifyRoom"
+                        >更改房间</el-button
+                    >
+                </el-form-item>
+            </el-form>
+        </div>
     </div>
 </template>
 
@@ -271,8 +279,12 @@ export default {
 
 <style lang="scss">
 .modify-room {
-    width: 30%;
-    margin: 50px auto;
+    padding: 20px;
+
+    .modify-room__form {
+        width: 50%;
+        margin: 16px;
+    }
 
     .modify-room__input {
         width: 50%;

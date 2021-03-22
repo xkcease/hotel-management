@@ -1,46 +1,51 @@
 <template>
     <div class="modify-price">
-        <el-form
-            :model="form"
-            :rules="rules"
-            ref="formElem"
-            label-position="right"
-            label-width="80px"
-        >
-            <p class="form__msg">{{ errorMsg }}</p>
-            <el-form-item prop="kingRoomPrice" label="大床间">
-                <el-input
-                    v-model="form.kingRoomPrice"
-                    class="modify-price__input"
-                >
-                </el-input>
-                <span class="modify-price__unit">元 / 晚</span>
-            </el-form-item>
-            <el-form-item prop="singleRoomPrice" label="单人间">
-                <el-input
-                    v-model="form.singleRoomPrice"
-                    class="modify-price__input"
-                >
-                </el-input>
-                <span class="modify-price__unit">元 / 晚</span>
-            </el-form-item>
-            <el-form-item prop="doubleRoomPrice" label="双人间">
-                <el-input
-                    v-model="form.doubleRoomPrice"
-                    class="modify-price__input"
-                >
-                </el-input>
-                <span class="modify-price__unit">元 / 晚</span>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    class="modify-price__btn"
-                    type="primary"
-                    @click="dialogVisible = true"
-                    >修改价格</el-button
-                >
-            </el-form-item>
-        </el-form>
+        <div class="form__title">
+            <h2>修改价格</h2>
+        </div>
+        <div class="modify-price__form">
+            <el-form
+                :model="form"
+                :rules="rules"
+                ref="formElem"
+                label-position="right"
+                label-width="80px"
+            >
+                <p class="form__msg">{{ errorMsg }}</p>
+                <el-form-item prop="kingRoomPrice" label="大床间">
+                    <el-input
+                        v-model="form.kingRoomPrice"
+                        class="modify-price__input"
+                    >
+                    </el-input>
+                    <span class="modify-price__unit">元 / 晚</span>
+                </el-form-item>
+                <el-form-item prop="singleRoomPrice" label="单人间">
+                    <el-input
+                        v-model="form.singleRoomPrice"
+                        class="modify-price__input"
+                    >
+                    </el-input>
+                    <span class="modify-price__unit">元 / 晚</span>
+                </el-form-item>
+                <el-form-item prop="doubleRoomPrice" label="双人间">
+                    <el-input
+                        v-model="form.doubleRoomPrice"
+                        class="modify-price__input"
+                    >
+                    </el-input>
+                    <span class="modify-price__unit">元 / 晚</span>
+                </el-form-item>
+                <el-form-item>
+                    <el-button
+                        class="modify-price__btn"
+                        type="primary"
+                        @click="dialogVisible = true"
+                        >修改价格</el-button
+                    >
+                </el-form-item>
+            </el-form>
+        </div>
         <el-dialog title="警告" v-model="dialogVisible" width="30%">
             <span>确认要修改价格吗？</span>
             <template #footer>
@@ -166,11 +171,15 @@ export default {
 
 <style lang="scss">
 .modify-price {
-    width: 30%;
-    margin: 50px auto;
+    padding: 20px;
+
+    .modify-price__form {
+        width: 50%;
+        margin: 16px;
+    }
 
     .modify-price__input {
-        width: 50%;
+        width: 90%;
     }
 
     .modify-price__unit {
@@ -180,7 +189,7 @@ export default {
 
     .modify-price__btn {
         display: block;
-        width: 50%;
+        width: 90%;
         margin-top: 12px;
     }
 }

@@ -49,7 +49,7 @@
                         </el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column align="center" label="操作" width="200">
+                <el-table-column align="center" label="操作" width="150">
                     <template #default="scope">
                         <div class="l-flex l-flex__justify--between">
                             <el-button
