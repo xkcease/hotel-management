@@ -1,70 +1,82 @@
 <template>
     <div class="hotel-intro">
-        <el-form
-            :model="form"
-            :rules="rules"
-            ref="formElem"
-            label-position="right"
-            label-width="80px"
-        >
-            <p class="form__msg">{{ errorMsg }}</p>
-            <el-form-item prop="name" label="名称">
-                <el-input v-model="form.name"> </el-input>
-            </el-form-item>
-            <el-form-item prop="address" label="地址">
-                <el-input v-model="form.address"> </el-input>
-            </el-form-item>
-            <el-form-item prop="contact" label="联系方式">
-                <el-input v-model="form.contact"> </el-input>
-            </el-form-item>
-            <el-form-item prop="options" label="标签">
-                <el-input v-model="form.options" placeholder="用英文;分隔标签">
-                </el-input>
-            </el-form-item>
-            <el-form-item prop="intro" label="简介">
-                <el-input
-                    type="textarea"
-                    v-model="form.intro"
-                    placeholder="输入其他内容"
-                    maxlength="254"
-                    show-word-limit
-                >
-                    <template #prefix>
-                        <i class="el-icon-lock form__icon"></i>
-                    </template>
-                </el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-upload
-                    ref="uploadElem"
-                    class="l-flex"
-                    action="http://localhost:9092/uploadIntroImg"
-                    :http-request="uploadImg"
-                    list-type="picture-card"
-                    :file-list="upload.list"
-                    :auto-upload="false"
-                    :limit="1"
-                    :on-preview="imgPreview"
-                    :on-change="verifyFileType"
-                >
-                    <i class="el-icon-plus"></i>
-                </el-upload>
-                <el-dialog v-model="dialogVisible">
-                    <div style="text-align: center">
-                        <img :src="upload.img" style="width: 100%" />
-                    </div>
-                </el-dialog>
-                <p class="hotel-intro__tip">只能上传一张图片</p>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    class="form__btn"
-                    type="primary"
-                    @click="updateHotelIntro"
-                    >提交</el-button
-                >
-            </el-form-item>
-        </el-form>
+        <div class="form__title">
+            <h2>基本信息</h2>
+        </div>
+        <div class="hotel-intro__form">
+            <el-form
+                :model="form"
+                :rules="rules"
+                ref="formElem"
+                label-position="right"
+                label-width="80px"
+            >
+                <p class="form__msg">{{ errorMsg }}</p>
+                <el-form-item prop="name" label="名称">
+                    <el-input v-model="form.name"> </el-input>
+                </el-form-item>
+                <el-form-item prop="address" label="地址">
+                    <el-input v-model="form.address"> </el-input>
+                </el-form-item>
+                <el-form-item prop="contact" label="联系方式">
+                    <el-input v-model="form.contact"> </el-input>
+                </el-form-item>
+                <div class="form__title form__title--form">
+                    <h2>其他</h2>
+                </div>
+                <el-form-item prop="options" label="配套设施">
+                    <el-input
+                        v-model="form.options"
+                        placeholder="用英文;分隔标签"
+                    >
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="intro" label="简介">
+                    <el-input
+                        type="textarea"
+                        v-model="form.intro"
+                        placeholder="输入其他内容"
+                        maxlength="254"
+                        rows="5"
+                        show-word-limit
+                    >
+                        <template #prefix>
+                            <i class="el-icon-lock form__icon"></i>
+                        </template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-upload
+                        ref="uploadElem"
+                        class="l-flex"
+                        action="http://localhost:9092/uploadIntroImg"
+                        :http-request="uploadImg"
+                        list-type="picture-card"
+                        :file-list="upload.list"
+                        :auto-upload="false"
+                        :limit="1"
+                        :on-preview="imgPreview"
+                        :on-change="verifyFileType"
+                    >
+                        <i class="el-icon-plus"></i>
+                    </el-upload>
+                    <el-dialog v-model="dialogVisible">
+                        <div style="text-align: center">
+                            <img :src="upload.img" style="width: 100%" />
+                        </div>
+                    </el-dialog>
+                    <p class="hotel-intro__tip">只能上传一张图片</p>
+                </el-form-item>
+                <el-form-item>
+                    <el-button
+                        class="form__btn"
+                        type="primary"
+                        @click="updateHotelIntro"
+                        >保存</el-button
+                    >
+                </el-form-item>
+            </el-form>
+        </div>
     </div>
 </template>
 
@@ -226,8 +238,12 @@ export default {
 
 <style lang="scss">
 .hotel-intro {
-    width: 30%;
-    margin: 50px auto;
+    padding: 20px;
+
+    .hotel-intro__form {
+        width: 50%;
+        margin: 16px;
+    }
 
     .hotel-intro__tip {
         font-size: 12px;

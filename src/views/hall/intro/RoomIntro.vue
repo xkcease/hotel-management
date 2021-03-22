@@ -1,108 +1,117 @@
 <template>
     <div class="room-intro">
-        <el-form
-            :model="form"
-            ref="formElem"
-            label-position="right"
-            label-width="80px"
-            :rules="rules"
-        >
-            <p class="form__msg">{{ errorMsg }}</p>
-            <el-form-item label="类型">
-                <el-select
-                    v-model="form.type"
-                    class="room-intro__input"
-                    @change="changeType"
-                >
-                    <el-option
-                        v-for="item in typeOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                    ></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item prop="text" label="名称">
-                <el-input v-model="form.text"> </el-input>
-            </el-form-item>
-            <el-form-item label="浴室">
-                <el-select v-model="form.shower" class="room-intro__input">
-                    <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                    ></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="电视">
-                <el-select v-model="form.tv" class="room-intro__input">
-                    <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                    ></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="窗户">
-                <el-select v-model="form.window" class="room-intro__input">
-                    <el-option
-                        v-for="item in windowOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                    ></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item prop="options" label="服务设施">
-                <el-input v-model="form.options" placeholder="用英文;分隔">
-                </el-input>
-            </el-form-item>
-            <el-form-item prop="intro" label="简介">
-                <el-input
-                    type="textarea"
-                    v-model="form.intro"
-                    placeholder="输入其他内容"
-                    maxlength="254"
-                    show-word-limit
-                >
-                    <template #prefix>
-                        <i class="el-icon-lock form__icon"></i>
-                    </template>
-                </el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-upload
-                    ref="uploadElem"
-                    class="l-flex"
-                    action="http://localhost:9092/uploadIntroImg"
-                    :http-request="uploadImg"
-                    list-type="picture-card"
-                    :file-list="upload.list"
-                    :auto-upload="false"
-                    :limit="1"
-                    :on-preview="imgPreview"
-                    :on-change="verifyFileType"
-                >
-                    <i class="el-icon-plus"></i>
-                </el-upload>
-                <el-dialog v-model="dialogVisible">
-                    <div style="text-align: center">
-                        <img :src="upload.img" style="width: 100%" />
-                    </div>
-                </el-dialog>
-                <p class="room-intro__tip">只能上传一张图片</p>
-            </el-form-item>
-            <el-form-item>
-                <el-button
-                    class="form__btn"
-                    type="primary"
-                    @click="updateRoomIntro"
-                    >添加新房间</el-button
-                >
-            </el-form-item>
-        </el-form>
+        <div class="form__title">
+            <h2>基本信息</h2>
+        </div>
+        <div class="room-intro__form">
+            <el-form
+                :model="form"
+                ref="formElem"
+                label-position="right"
+                label-width="80px"
+                :rules="rules"
+            >
+                <p class="form__msg">{{ errorMsg }}</p>
+                <el-form-item label="类型">
+                    <el-select
+                        v-model="form.type"
+                        class="room-intro__input"
+                        @change="changeType"
+                    >
+                        <el-option
+                            v-for="item in typeOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item prop="text" label="名称">
+                    <el-input v-model="form.text"> </el-input>
+                </el-form-item>
+                <el-form-item label="浴室">
+                    <el-select v-model="form.shower" class="room-intro__input">
+                        <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="电视">
+                    <el-select v-model="form.tv" class="room-intro__input">
+                        <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="窗户">
+                    <el-select v-model="form.window" class="room-intro__input">
+                        <el-option
+                            v-for="item in windowOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        ></el-option>
+                    </el-select>
+                </el-form-item>
+                <div class="form__title form__title--form">
+                    <h2>其他</h2>
+                </div>
+                <el-form-item prop="options" label="服务设施">
+                    <el-input v-model="form.options" placeholder="用英文;分隔">
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="intro" label="简介">
+                    <el-input
+                        type="textarea"
+                        v-model="form.intro"
+                        placeholder="输入其他内容"
+                        maxlength="254"
+                        rows="5"
+                        show-word-limit
+                    >
+                        <template #prefix>
+                            <i class="el-icon-lock form__icon"></i>
+                        </template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-upload
+                        ref="uploadElem"
+                        class="l-flex"
+                        action="http://localhost:9092/uploadIntroImg"
+                        :http-request="uploadImg"
+                        list-type="picture-card"
+                        :file-list="upload.list"
+                        :auto-upload="false"
+                        :limit="1"
+                        :on-preview="imgPreview"
+                        :on-change="verifyFileType"
+                    >
+                        <i class="el-icon-plus"></i>
+                    </el-upload>
+                    <el-dialog v-model="dialogVisible">
+                        <div style="text-align: center">
+                            <img :src="upload.img" style="width: 100%" />
+                        </div>
+                    </el-dialog>
+                    <p class="room-intro__tip">只能上传一张图片</p>
+                </el-form-item>
+                <el-form-item>
+                    <el-button
+                        class="form__btn"
+                        type="primary"
+                        @click="updateRoomIntro"
+                        >保存</el-button
+                    >
+                </el-form-item>
+            </el-form>
+        </div>
     </div>
 </template>
 
@@ -330,8 +339,12 @@ export default {
 
 <style lang="scss">
 .room-intro {
-    width: 30%;
-    margin: 50px auto;
+    padding: 20px;
+
+    .room-intro__form {
+        width: 50%;
+        margin: 16px;
+    }
 
     .room-intro__input {
         width: 50%;
