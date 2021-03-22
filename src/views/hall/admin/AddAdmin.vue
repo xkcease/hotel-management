@@ -1,66 +1,80 @@
 <template>
     <div class="add-admin">
-        <el-form :model="form" :rules="rules" ref="formElem">
-            <p class="form__msg">{{ errorMsg }}</p>
-            <el-form-item prop="username">
-                <el-input
-                    v-model="form.username"
-                    placeholder="请输入用户名(长度2-20的数字或字母)"
-                >
-                    <template #prefix>
-                        <i class="el-icon-user form__icon"></i>
-                    </template>
-                </el-input>
-            </el-form-item>
-            <el-form-item prop="idkey">
-                <el-input
-                    v-model="form.idkey"
-                    placeholder="请输入密保(长度4-20的数字或字母)"
-                >
-                    <template #prefix>
-                        <i class="el-icon-key form__icon"></i>
-                    </template>
-                </el-input>
-            </el-form-item>
-            <el-form-item prop="password">
-                <el-input
-                    v-model="form.password"
-                    placeholder="请输入密码(长度4-20的数字或字母或下划线)"
-                    show-password
-                >
-                    <template #prefix>
-                        <i class="el-icon-lock form__icon"></i>
-                    </template>
-                </el-input>
-            </el-form-item>
-            <el-form-item prop="againPassword">
-                <el-input
-                    v-model="form.againPassword"
-                    placeholder="请再次输入密码"
-                    show-password
-                >
-                    <template #prefix>
-                        <i class="el-icon-lock form__icon"></i>
-                    </template>
-                </el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-select v-model="form.permission" style="width: 35%">
-                    <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                    ></el-option>
-                </el-select>
-                <span class="add-admin__detail">{{ detail }}</span>
-            </el-form-item>
-            <el-form-item>
-                <el-button class="form__btn" type="primary" @click="register"
-                    >注册</el-button
-                >
-            </el-form-item>
-        </el-form>
+        <div class="form__title">
+            <h2>添加新管理员</h2>
+        </div>
+        <div class="add-admin__form">
+            <el-form
+                :model="form"
+                :rules="rules"
+                ref="formElem"
+                label-position="right"
+                label-width="80px"
+            >
+                <p class="form__msg">{{ errorMsg }}</p>
+                <el-form-item prop="username" label="用户名">
+                    <el-input
+                        v-model="form.username"
+                        placeholder="请输入用户名(长度2-20的数字或字母)"
+                    >
+                        <template #prefix>
+                            <i class="el-icon-user form__icon"></i>
+                        </template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="idkey" label="密保">
+                    <el-input
+                        v-model="form.idkey"
+                        placeholder="请输入密保(长度4-20的数字或字母)"
+                    >
+                        <template #prefix>
+                            <i class="el-icon-key form__icon"></i>
+                        </template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="password" label="密码">
+                    <el-input
+                        v-model="form.password"
+                        placeholder="请输入密码(长度4-20的数字或字母或下划线)"
+                        show-password
+                    >
+                        <template #prefix>
+                            <i class="el-icon-lock form__icon"></i>
+                        </template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="againPassword" label="确认密码">
+                    <el-input
+                        v-model="form.againPassword"
+                        placeholder="请再次输入密码"
+                        show-password
+                    >
+                        <template #prefix>
+                            <i class="el-icon-lock form__icon"></i>
+                        </template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="权限">
+                    <el-select v-model="form.permission" style="width: 35%">
+                        <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        ></el-option>
+                    </el-select>
+                    <span class="add-admin__detail">{{ detail }}</span>
+                </el-form-item>
+                <el-form-item>
+                    <el-button
+                        class="form__btn"
+                        type="primary"
+                        @click="register"
+                        >注册</el-button
+                    >
+                </el-form-item>
+            </el-form>
+        </div>
     </div>
 </template>
 
@@ -190,8 +204,12 @@ export default {
 
 <style lang="scss">
 .add-admin {
-    width: 30%;
-    margin: 50px auto;
+    padding: 20px;
+
+    .add-admin__form {
+        width: 50%;
+        margin: 16px;
+    }
 
     .add-admin__detail {
         font-size: 12px;
