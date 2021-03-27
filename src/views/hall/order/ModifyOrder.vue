@@ -1,99 +1,118 @@
 <template>
     <div class="modify-order">
-        <div v-if="state === 1">
-            <div class="modify-order__label">房号</div>
-            <span class="m-l-12">{{ roomInfo.number }}</span>
-        </div>
-        <div v-if="state === 0">
-            <div class="modify-order__label">类型</div>
-            <el-select v-model="type" class="modify-order__input m-l-12">
-                <el-option
-                    v-for="item in typeOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                ></el-option>
-            </el-select>
-        </div>
-        <div v-else>
-            <div class="modify-order__label">类型</div>
-            <span class="m-l-12" style="margin-right: 20px">{{
-                roomInfo.typeText
-            }}</span>
-            <el-tag
-                v-if="roomInfo.shower"
-                size="small"
-                type="info"
-                effect="plain"
-            >
-                浴室
-            </el-tag>
-            <el-tag
-                v-if="roomInfo.tv"
-                class="m-l-12"
-                size="small"
-                type="info"
-                effect="plain"
-            >
-                电视
-            </el-tag>
-        </div>
-        <div>
-            <div class="modify-order__label">订单号</div>
-            <span class="m-l-12">{{ order.oid }}</span>
-        </div>
-        <div v-if="state === 0">
-            <div class="modify-order__label">下单时间</div>
-            <span class="m-l-12">{{ order.placeTime }}</span>
-        </div>
-        <div v-else>
-            <div class="modify-order__label">入住时间</div>
-            <span class="m-l-12">{{ order.checkInTime }}</span>
-        </div>
-        <div>
-            <div class="modify-order__label">联系方式</div>
-            <span class="m-l-12">{{ order.contact }}</span>
-        </div>
-        <div>
-            <p class="modify-order__extra">{{ roomInfo.extra }}</p>
-        </div>
-        <el-date-picker
-            v-if="state === 0"
-            class="modify-order__picker"
-            v-model="dateArray"
-            type="daterange"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            :disabledDate="disabledDate"
-            :disabled="isDisable"
-            @change="computeNights"
+        <el-steps
+            class="modify-order__steps"
+            :active="stepActive"
+            finish-status="success"
         >
-        </el-date-picker>
-        <div style="display: inline" v-if="state === 1">
-            <el-date-picker
-                v-model="pi.date"
-                type="date"
-                placeholder="选择日期"
-                class="modify-order__pi"
-                disabled
+            <el-step title="未入住"></el-step>
+            <el-step title="已入住"></el-step>
+            <el-step title="退房"></el-step>
+        </el-steps>
+        <div class="modify-order__content">
+            <el-card class="modify-order__card">
+                <div v-if="state === 1">
+                    <div class="modify-order__label">房号</div>
+                    <span class="m-l-12">{{ roomInfo.number }}</span>
+                </div>
+                <div v-if="state === 0">
+                    <div class="modify-order__label">类型</div>
+                    <el-select
+                        v-model="type"
+                        class="modify-order__input m-l-12"
+                    >
+                        <el-option
+                            v-for="item in typeOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                        ></el-option>
+                    </el-select>
+                </div>
+                <div v-else>
+                    <div class="modify-order__label">类型</div>
+                    <span class="m-l-12" style="margin-right: 20px">{{
+                        roomInfo.typeText
+                    }}</span>
+                    <el-tag
+                        v-if="roomInfo.shower"
+                        size="small"
+                        type="info"
+                        effect="plain"
+                    >
+                        浴室
+                    </el-tag>
+                    <el-tag
+                        v-if="roomInfo.tv"
+                        class="m-l-12"
+                        size="small"
+                        type="info"
+                        effect="plain"
+                    >
+                        电视
+                    </el-tag>
+                </div>
+                <div>
+                    <div class="modify-order__label">订单号</div>
+                    <span class="m-l-12">{{ order.oid }}</span>
+                </div>
+                <div v-if="state === 0">
+                    <div class="modify-order__label">下单时间</div>
+                    <span class="m-l-12">{{ order.placeTime }}</span>
+                </div>
+                <div v-else>
+                    <div class="modify-order__label">入住时间</div>
+                    <span class="m-l-12">{{ order.checkInTime }}</span>
+                </div>
+                <div>
+                    <div class="modify-order__label">联系方式</div>
+                    <span class="m-l-12">{{ order.contact }}</span>
+                </div>
+                <div>
+                    <p class="modify-order__extra">{{ roomInfo.extra }}</p>
+                </div>
+                <el-date-picker
+                    v-if="state === 0"
+                    class="modify-order__picker"
+                    v-model="dateArray"
+                    type="daterange"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    :disabledDate="disabledDate"
+                    :disabled="isDisable"
+                    @change="computeNights"
+                >
+                </el-date-picker>
+                <div style="display: inline" v-if="state === 1">
+                    <el-date-picker
+                        v-model="pi.date"
+                        type="date"
+                        placeholder="选择日期"
+                        class="modify-order__pi"
+                        disabled
+                    >
+                    </el-date-picker>
+                    至
+                    <el-date-picker
+                        v-model="pi.nextDate"
+                        type="date"
+                        placeholder="选择日期"
+                        class="modify-order__pi"
+                        :disabledDate="piDisabledDate"
+                        @change="piComputeNights"
+                    >
+                    </el-date-picker>
+                </div>
+                <span class="m-l-8">{{ nights }}</span>
+            </el-card>
+            <el-button
+                class="modify-order__submit"
+                type="primary"
+                @click="submit"
             >
-            </el-date-picker>
-            至
-            <el-date-picker
-                v-model="pi.nextDate"
-                type="date"
-                placeholder="选择日期"
-                class="modify-order__pi"
-                :disabledDate="piDisabledDate"
-                @change="piComputeNights"
-            >
-            </el-date-picker>
+                修改
+            </el-button>
         </div>
-        <span class="m-l-8">{{ nights }}</span>
-
-        <el-button class="modify-order__submit" type="primary" @click="submit">
-            修改
-        </el-button>
     </div>
 </template>
 
@@ -113,6 +132,7 @@ export default {
         const route = useRoute();
 
         const state = parseInt(route.params.state);
+        const stepActive = ref(0);
 
         const typeOptions = [
             {
@@ -142,6 +162,8 @@ export default {
 
         // 获取房间信息
         if (state === 1) {
+            stepActive.value = 1;
+
             getRoomInfoRequest(route.query.number)
                 .then((res) => {
                     if (res.state) {
@@ -272,6 +294,7 @@ export default {
         };
 
         return {
+            stepActive,
             type,
             typeOptions,
             roomInfo,
@@ -292,11 +315,23 @@ export default {
 
 <style lang="scss">
 .modify-order {
-    width: 30%;
-    margin: 50px auto;
     font-size: 14px;
     color: #606266;
     line-height: 50px;
+
+    .modify-order__content {
+        width: 33%;
+        margin: 30px auto;
+    }
+
+    .modify-order__steps {
+        width: 70%;
+        margin: 30px auto;
+    }
+
+    .modify-order__card {
+        margin-bottom: 20px;
+    }
 
     .modify-order__input {
         width: 30%;
@@ -311,7 +346,7 @@ export default {
     }
 
     .modify-order__picker {
-        margin-bottom: 30px;
+        margin-bottom: 10px;
     }
 
     .modify-order__pi {
@@ -326,7 +361,7 @@ export default {
 
     .modify-order__submit {
         display: block;
-        width: 90%;
+        width: 100%;
         margin-top: 40px;
     }
 }

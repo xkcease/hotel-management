@@ -1,76 +1,106 @@
 <template>
     <div class="check-out">
-        <div>
-            <div class="check-out__label">房号</div>
-            <span class="m-l-12">{{ roomInfo.number }}</span>
-        </div>
-        <div>
-            <div class="check-out__label">类型</div>
-            <span class="m-l-12" style="margin-right: 20px">{{
-                roomInfo.typeText
-            }}</span>
-            <el-tag
-                v-if="roomInfo.shower"
-                size="small"
-                type="info"
-                effect="plain"
-            >
-                浴室
-            </el-tag>
-            <el-tag
-                v-if="roomInfo.tv"
-                class="m-l-12"
-                size="small"
-                type="info"
-                effect="plain"
-            >
-                电视
-            </el-tag>
-        </div>
-        <div>
-            <div class="check-out__label">订单号</div>
-            <span class="m-l-12">{{ orderInfo.oid }}</span>
-        </div>
-        <div>
-            <div class="check-out__label">入住时间</div>
-            <span class="m-l-12">{{ orderInfo.checkInTime }}</span>
-        </div>
-        <div>
-            <div class="check-out__label">住宿时间</div>
-            <span class="m-l-12">{{ orderInfo.reservationDate }}</span>
-        </div>
-        <div>
-            <div class="check-out__label">入住时长</div>
-            <span class="m-l-12">{{ orderInfo.during }} 晚</span>
-        </div>
-        <div>
-            <div class="check-out__label">单价</div>
-            <span class="m-l-12">￥ {{ price }} 元 / 晚</span>
-        </div>
-        <div>
-            <div class="check-out__label">合计</div>
-            <p class="m-l-12" style="display: inline-block">
-                ￥
-                <span class="check-out__total">{{
-                    price * orderInfo.during
-                }}</span>
-                元
-            </p>
-        </div>
-        <el-button
-            v-if="!isDisabled"
-            type="primary"
-            class="check-out__btn"
-            @click="submit"
-            >办理退房</el-button
+        <el-steps
+            class="check-out__steps"
+            :active="stepActive"
+            finish-status="success"
         >
+            <el-step title="未入住"></el-step>
+            <el-step title="已入住"></el-step>
+            <el-step title="退房"></el-step>
+        </el-steps>
+        <div class="check-out__content">
+            <el-card class="check-out__card">
+                <div>
+                    <div class="check-out__label">房号</div>
+                    <span class="m-l-12">{{ roomInfo.number }}</span>
+                </div>
+                <div>
+                    <div class="check-out__label">类型</div>
+                    <span class="m-l-12" style="margin-right: 20px">{{
+                        roomInfo.typeText
+                    }}</span>
+                    <el-tag
+                        v-if="roomInfo.shower"
+                        size="small"
+                        type="info"
+                        effect="plain"
+                    >
+                        浴室
+                    </el-tag>
+                    <el-tag
+                        v-if="roomInfo.tv"
+                        class="m-l-12"
+                        size="small"
+                        type="info"
+                        effect="plain"
+                    >
+                        电视
+                    </el-tag>
+                </div>
+                <div>
+                    <div class="check-out__label">订单号</div>
+                    <span class="m-l-12">{{ orderInfo.oid }}</span>
+                </div>
+                <div>
+                    <div class="check-out__label">入住时间</div>
+                    <span class="m-l-12">{{ orderInfo.checkInTime }}</span>
+                </div>
+                <div>
+                    <div class="check-out__label">住宿时间</div>
+                    <span class="m-l-12">{{ orderInfo.reservationDate }}</span>
+                </div>
+                <div>
+                    <div class="check-out__label">入住时长</div>
+                    <span class="m-l-12">{{ orderInfo.during }} 晚</span>
+                </div>
+                <div>
+                    <div class="check-out__label">单价</div>
+                    <span class="m-l-12">￥ {{ price }} 元 / 晚</span>
+                </div>
+                <div>
+                    <div class="check-out__label">合计</div>
+                    <p class="m-l-12" style="display: inline-block">
+                        ￥
+                        <span class="check-out__total">{{
+                            price * orderInfo.during
+                        }}</span>
+                        元
+                    </p>
+                </div>
+            </el-card>
+            <el-card>
+                <div>
+                    <div class="check-out__label">联系方式</div>
+                    <span class="m-l-12">{{ orderInfo.contact }}</span>
+                </div>
+                <div v-for="(guest, index) in guests" :key="index">
+                    <div>
+                        <div class="check-out__label">身份证</div>
+                        <span class="m-l-12">{{ guest.gid }}</span>
+                    </div>
+                    <div>
+                        <div class="check-out__label">姓名</div>
+                        <span class="m-l-12">{{ guest.name }}</span>
+                    </div>
+                </div>
+            </el-card>
+            <el-button
+                v-if="!isDisabled"
+                type="primary"
+                class="check-out__btn"
+                @click="submit"
+                >办理退房</el-button
+            >
+        </div>
     </div>
 </template>
 
 <script>
-import { reactive, ref } from 'vue';
+import { reactive, ref, toRefs } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
+import { getGuestsRequest } from '@/utils/guestRequest';
 import { getRoomInfoRequest } from '@/utils/roomRequest';
 import {
     checkOutRequest,
@@ -129,6 +159,7 @@ export default {
             reservationDate: '',
             during: 0,
             checkInTime: '',
+            contact: '',
         });
 
         getOrderInfoByOidRequest(route.query.oid)
@@ -147,6 +178,7 @@ export default {
                     orderInfo.checkInTime = getFormatDateTime(
                         res.order.check_in_time
                     );
+                    orderInfo.contact = res.order.contact;
                 } else {
                     ElMessage.warning(res.msg);
                 }
@@ -155,8 +187,23 @@ export default {
                 console.log(err);
             });
 
+        const guestRea = reactive({
+            guests: [],
+        });
+
+        getGuestsRequest(route.query.oid)
+            .then((res) => {
+                console.log(res);
+                guestRea.guests = res;
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
+        const stepActive = ref(2);
         const isDisabled = ref(false);
         if (route.params.state && route.params.state !== '1') {
+            stepActive.value = 3;
             isDisabled.value = true;
         }
 
@@ -178,7 +225,9 @@ export default {
         return {
             roomInfo,
             orderInfo,
+            ...toRefs(guestRea),
             price,
+            stepActive,
             isDisabled,
             submit,
         };
@@ -188,11 +237,23 @@ export default {
 
 <style lang="scss">
 .check-out {
-    width: 30%;
-    margin: 50px auto;
     font-size: 16px;
     color: #606266;
     line-height: 42px;
+
+    .check-out__steps {
+        width: 70%;
+        margin: 30px auto;
+    }
+
+    .check-out__content {
+        width: 27%;
+        margin: 30px auto;
+    }
+
+    .check-out__card {
+        margin-bottom: 20px;
+    }
 
     .check-out__label {
         display: inline-block;
@@ -205,7 +266,7 @@ export default {
     }
 
     .check-out__btn {
-        width: 80%;
+        width: 100%;
         margin-top: 40px;
     }
 }

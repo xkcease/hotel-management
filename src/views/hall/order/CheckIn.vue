@@ -1,124 +1,136 @@
 <template>
     <div class="check-in">
-        <div style="padding-left: 40px; margin-bottom: 30px">
-            <div>
-                <p>
-                    房号
-                    <el-cascader
-                        v-if="uid"
-                        :options="roomOptions.options"
-                        v-model="roomOptions.value"
-                        :props="roomOptions.props"
-                        :show-all-levels="false"
-                        class="m-l-8"
-                    ></el-cascader>
-                    <span v-else class="m-l-8">{{ roomInfo.number }}</span>
-                </p>
-            </div>
-            <div>
-                <p>
-                    类型
-                    <span class="m-l-8">{{ roomInfo.typeText }}</span>
-                </p>
-            </div>
-            <div>
-                <p>
-                    订单
-                    <span class="m-l-8">{{ oid }}</span>
-                </p>
-            </div>
-            <div>
-                <el-tag
-                    v-if="roomInfo.shower"
-                    size="small"
-                    type="info"
-                    effect="plain"
-                >
-                    浴室
-                </el-tag>
-                <el-tag
-                    v-if="roomInfo.tv"
-                    class="m-l-8"
-                    size="small"
-                    type="info"
-                    effect="plain"
-                >
-                    电视
-                </el-tag>
-            </div>
-            <div>
-                <p class="check-in__extra">{{ roomInfo.extra }}</p>
-            </div>
-        </div>
-        <el-date-picker
-            class="check-in__picker"
-            v-model="dateArray"
-            type="daterange"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            :disabledDate="disabledDate"
-            :disabled="isDisable"
-            @change="computeNights"
-        >
-        </el-date-picker>
-        <span class="m-l-8">{{ nights }}</span>
-        <el-form
-            :model="form"
-            ref="formElem"
-            label-position="right"
-            label-width="80px"
-        >
-            <el-form-item
-                prop="contact"
-                :rules="rules.contact"
-                label="联系方式"
-                class="check-in__item"
-            >
-                <el-input v-model="form.contact"></el-input>
-            </el-form-item>
-            <div v-for="(item, index) in form.guests" :key="index">
-                <div class="check-in__block">
-                    <el-form-item
-                        :prop="'guests.' + index + '.name'"
-                        :rules="rules.name"
-                        label="姓名"
-                        class="check-in__item"
-                    >
-                        <el-input v-model="item.name"></el-input>
-                    </el-form-item>
-                    <el-form-item
-                        :prop="'guests.' + index + '.gid'"
-                        :rules="rules.gid"
-                        label="身份证"
-                        class="check-in__item"
-                    >
-                        <el-input v-model="item.gid"></el-input>
-                    </el-form-item>
-                    <el-button
-                        class="check-in__delete"
-                        v-if="index !== 0"
-                        @click="deleteItem"
-                    >
-                        删除
-                    </el-button>
+        <el-steps class="check-in__steps" :active="0" finish-status="success">
+            <el-step title="未入住"></el-step>
+            <el-step title="已入住"></el-step>
+            <el-step title="退房"></el-step>
+        </el-steps>
+        <div class="check-in__content">
+            <el-card class="check-in__card">
+                <div style="padding-left: 40px; margin-bottom: 30px">
+                    <div>
+                        <p>
+                            房号
+                            <el-cascader
+                                v-if="uid"
+                                :options="roomOptions.options"
+                                v-model="roomOptions.value"
+                                :props="roomOptions.props"
+                                :show-all-levels="false"
+                                class="m-l-8"
+                            ></el-cascader>
+                            <span v-else class="m-l-8">{{
+                                roomInfo.number
+                            }}</span>
+                        </p>
+                    </div>
+                    <div>
+                        <p>
+                            类型
+                            <span class="m-l-8">{{ roomInfo.typeText }}</span>
+                        </p>
+                    </div>
+                    <div>
+                        <p>
+                            订单
+                            <span class="m-l-8">{{ oid }}</span>
+                        </p>
+                    </div>
+                    <div>
+                        <el-tag
+                            v-if="roomInfo.shower"
+                            size="small"
+                            type="info"
+                            effect="plain"
+                        >
+                            浴室
+                        </el-tag>
+                        <el-tag
+                            v-if="roomInfo.tv"
+                            class="m-l-8"
+                            size="small"
+                            type="info"
+                            effect="plain"
+                        >
+                            电视
+                        </el-tag>
+                    </div>
+                    <div>
+                        <p class="check-in__extra">{{ roomInfo.extra }}</p>
+                    </div>
                 </div>
-                <el-divider
-                    v-if="index !== form.guests.length - 1"
-                ></el-divider>
-            </div>
-            <el-form-item>
-                <el-button
-                    class="check-in__submit"
-                    type="primary"
-                    @click="submit"
+                <el-date-picker
+                    class="check-in__picker"
+                    v-model="dateArray"
+                    type="daterange"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    :disabledDate="disabledDate"
+                    :disabled="isDisable"
+                    @change="computeNights"
                 >
-                    提交
-                </el-button>
-                <el-button class="check-in__increase" @click="increaseItem">
-                    增加表项
-                </el-button>
-            </el-form-item>
-        </el-form>
+                </el-date-picker>
+                <span class="m-l-8">{{ nights }}</span>
+            </el-card>
+            <el-card class="check-in__card">
+                <el-form
+                    :model="form"
+                    ref="formElem"
+                    label-position="right"
+                    label-width="80px"
+                >
+                    <el-form-item
+                        prop="contact"
+                        :rules="rules.contact"
+                        label="联系方式"
+                        class="check-in__item"
+                    >
+                        <el-input v-model="form.contact"></el-input>
+                    </el-form-item>
+                    <div v-for="(item, index) in form.guests" :key="index">
+                        <div class="check-in__block">
+                            <el-form-item
+                                :prop="'guests.' + index + '.name'"
+                                :rules="rules.name"
+                                label="姓名"
+                                class="check-in__item"
+                            >
+                                <el-input v-model="item.name"></el-input>
+                            </el-form-item>
+                            <el-form-item
+                                :prop="'guests.' + index + '.gid'"
+                                :rules="rules.gid"
+                                label="身份证"
+                                class="check-in__item"
+                            >
+                                <el-input v-model="item.gid"></el-input>
+                            </el-form-item>
+                            <el-button
+                                class="check-in__delete"
+                                v-if="index !== 0"
+                                @click="deleteItem"
+                            >
+                                删除
+                            </el-button>
+                        </div>
+                        <el-divider
+                            v-if="index !== form.guests.length - 1"
+                        ></el-divider>
+                    </div>
+                    <el-form-item style="margin-bottom: 50px">
+                        <el-button
+                            class="check-in__increase"
+                            @click="increaseItem"
+                        >
+                            增加表项
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+            </el-card>
+            <el-button class="check-in__submit" type="primary" @click="submit">
+                提交
+            </el-button>
+        </div>
     </div>
 </template>
 
@@ -355,11 +367,23 @@ export default {
 
 <style lang="scss">
 .check-in {
-    width: 30%;
-    margin: 50px auto;
     font-size: 14px;
     color: #606266;
     line-height: 40px;
+
+    .check-in__steps {
+        width: 70%;
+        margin: 30px auto;
+    }
+
+    .check-in__content {
+        width: 33%;
+        margin: 30px auto;
+    }
+
+    .check-in__card {
+        margin-bottom: 20px;
+    }
 
     .check-in__extra {
         width: 70%;
@@ -370,7 +394,7 @@ export default {
     }
 
     .check-in__picker {
-        margin-bottom: 30px;
+        margin-bottom: 10px;
     }
 
     .check-in__block {
@@ -388,7 +412,8 @@ export default {
     }
 
     .check-in__submit {
-        width: 56%;
+        width: 100%;
+        margin-top: 10px;
     }
 
     .check-in__increase {
