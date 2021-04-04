@@ -202,7 +202,7 @@ export default {
                     addRoomRequest(form)
                         .then((res) => {
                             if (res.state) {
-                                uploadElem.value.submit();
+                                // uploadElem.value.submit();
                                 ElMessage.success(res.msg);
                                 formElem.value.resetFields();
                             } else {
