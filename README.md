@@ -60,8 +60,6 @@ npm run build
 21.	酒店简介修改
 22. 房间描述修改
 23. 实时接收订单
-24. to be continued
-
 
 ## 目录
 ```shell
@@ -72,75 +70,77 @@ hotel-management
 │  .prettierrc
 │  babel.config.js
 │  jest.config.js
+│  LICENSE
 │  package-lock.json
 │  package.json
 │  README.md
 │  vue.config.js
-│       
+│
 ├─public
 │      favicon.ico
 │      index.html
-│      
+│
 ├─src
 │  │  App.vue
 │  │  main.js
-│  │  
+│  │
 │  ├─assets
 │  │  ├─css
 │  │  │      reset.css
-│  │  │      
+│  │  │
 │  │  └─scss
 │  │          base.scss
 │  │          color.scss
 │  │          index.scss
-│  │          
+│  │
 │  ├─components
 │  │      Navbar.vue
 │  │      SearchFilter.vue
 │  │      Sidebar.vue
 │  │      SvgIcon.vue
-│  │      
+│  │
 │  ├─icons
 │  │  │  index.js
-│  │  │  
+│  │  │
 │  │  └─svg
 │  │          home.svg
 │  │          hotel.svg
-│  │          
+│  │
 │  ├─router
 │  │      index.js
-│  │      
+│  │
 │  ├─store
 │  │      index.js
-│  │      
+│  │
 │  ├─utils
 │  │      adminRequest.js
-│  │      dateTool.js                      // 日期格式化工具
-│  │      http.js                          // axios封装
+│  │      dateTool.js
+│  │      guestRequest.js
+│  │      http.js
 │  │      introRequest.js
 │  │      loading.js
 │  │      orderRequest.js
 │  │      priceRequest.js
 │  │      roomRequest.js
 │  │      socketIOTool.js
-│  │      
+│  │
 │  └─views
 │      │  404.vue
 │      │  Hall.vue
 │      │  Login.vue
-│      │  
+│      │
 │      └─hall
 │          │  Home.vue
 │          │  ModifyPassword.vue
-│          │  
+│          │
 │          ├─admin
 │          │      AddAdmin.vue
 │          │      AdminList.vue
-│          │      
+│          │
 │          ├─intro
 │          │      HotelIntro.vue
 │          │      RoomIntro.vue
-│          │      
+│          │
 │          ├─order
 │          │      CheckIn.vue
 │          │      CheckOut.vue
@@ -148,13 +148,13 @@ hotel-management
 │          │      ModifyOrder.vue
 │          │      OccupiedOrder.vue
 │          │      ReservedOrder.vue
-│          │      
+│          │
 │          └─room
 │                  AddRoom.vue
 │                  ModifyPrice.vue
 │                  ModifyRoom.vue
 │                  RoomList.vue
-│                  
+│
 └─tests
     └─unit
             example.spec.js
